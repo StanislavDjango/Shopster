@@ -1,16 +1,16 @@
-from http import HTTPStatus
+﻿from http import HTTPStatus
 
 import pytest
 from django.urls import reverse
 
+pytestmark = [pytest.mark.smoke, pytest.mark.django_db]
 
-@pytest.mark.smoke
+
 def test_home_page_available(client):
     response = client.get("/")
     assert response.status_code == HTTPStatus.OK
 
 
-@pytest.mark.smoke
 def test_products_endpoint_returns_json(client):
     url = reverse("product-list")
     response = client.get(url)

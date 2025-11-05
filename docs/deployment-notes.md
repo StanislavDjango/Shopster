@@ -2,79 +2,75 @@
 
 ## Infrastructure Overview
 
-- **Backend**: Django 5 + Gunicorn running in container `web` (`stanyslav/vebsaythub:latest`).
-- **Frontend**: Next.js 15 running in container `frontend` (`stanyslav/vebsayt-frontend:latest`).
+- **Backend**: Django 5 + Gunicorn container `web` (`stanyslav/vebsaythub:latest`).
+- **Frontend**: Next.js 15 container `frontend` (`stanyslav/vebsayt-frontend:latest`).
 - **Database**: PostgreSQL 16 (`postgres:16-alpine`) exposed on host port `5433`.
 - **Cache**: Redis 7 (`redis:7-alpine`) exposed on host port `6379`.
-- **Compose location on server**: `/srv/vebsayt/docker-compose.yml`.
-- **Persistent volumes**:
-  - `postgres_data` → Postgres data files.
-  - `static_volume` → Django collected static files.
-  - `media_volume` → Django media uploads.
+- **Compose file on server**: `/srv/vebsayt/docker-compose.yml`.
+- **Volumes**:
+  - `postgres_data` — Postgres data files.
+  - `static_volume` — Django collected static files.
+  - `media_volume` — Django media uploads.
 
-## Environment Files (server)
+## Environment Files (Server)
 
-- `/srv/vebsayt/.env` — Django/Backend configuration (database creds, JWT settings, etc.).
-- `/srv/vebsayt/.env.local.frontend` — Next.js configuration (API URL, Algolia keys, auth secret).
+- `/srv/vebsayt/.env` — Django/backend configuration (database creds, JWT settings, Sentry, etc.).
+- `/srv/vebsayt/.env.local.frontend` — Next.js configuration (API URL, Algolia keys, NextAuth secret).
 
-> Сами значения переменных не храним в отчёте — доступ есть непосредственно на сервере.
+> Store `.env` files securely on the server — do not commit them to Git.
 
 ## Docker Workflow
 
-### Локальная сборка
+### 1. Local Build
 ```bash
-# Собрать образы (backend + frontend) из deploy/docker-compose.yml
-docker compose -f deploy/docker-compose.yml build
-
-# Проверить локальные образы
-docker images
+docker compose -f deploy/docker-compose.yml build        # build backend + frontend production images
+docker images                                            # verify local images
 ```
 
-### Публикация в Docker Hub
+### 2. Publish to Docker Hub
 ```bash
 docker login
 
-# Backend (если пересобирали локально)
+# Backend image
 docker tag deploy-web:latest stanyslav/vebsaythub:latest
 docker push stanyslav/vebsaythub:latest
 
-# Frontend
+# Frontend image
 docker tag deploy-frontend:latest stanyslav/vebsayt-frontend:latest
 docker push stanyslav/vebsayt-frontend:latest
 ```
 
-### Обновление на сервере
+> Releases can also be triggered via GitHub Actions (`docker-build.yml`) once Docker Hub credentials are configured.
+
+### 3. Update on the Server
 ```bash
 ssh root@<SERVER_IP>
 cd /srv/vebsayt
-docker compose pull            # стянуть свежие образы
-docker compose up -d           # перезапустить сервисы в фоне
-docker compose ps              # убедиться, что все контейнеры running
+docker compose pull            # fetch latest images
+docker compose up -d           # restart containers in the background
+docker compose ps              # confirm all services are running
 ```
 
-### Полезные команды
+### Useful Commands
 ```bash
-# Логи
-docker compose logs web | tail -n 50        # Django
-docker compose logs frontend | tail -n 50   # Next.js
+docker compose logs web | tail -n 50        # Django logs
+docker compose logs frontend | tail -n 50   # Next.js logs
 
-# Перезапуск отдельных сервисов
-docker compose restart web
-docker compose restart frontend
+docker compose restart web                  # restart backend
+docker compose restart frontend             # restart frontend
 
-# Вход в контейнер
-docker compose exec web bash
+docker compose exec web bash                # shell inside backend container
 docker compose exec db psql -U POSTGRES shop
 ```
 
-## Бэкап и восстановление базы
+## Database Backup & Restore
 
-### Экспорт локальной базы
+### Export Local Database
 ```bash
 cmd /c "docker compose exec -T db pg_dump -U POSTGRES --encoding UTF8 shop > dump_local.sql"
 ```
 
-### Импорт на сервер
+### Import on Server
 ```bash
 scp dump_local.sql root@<SERVER_IP>:/srv/vebsayt/dump_local.sql
 ssh root@<SERVER_IP>
@@ -86,23 +82,17 @@ docker compose exec -T db psql -U POSTGRES shop < dump_local.sql
 docker compose start web
 ```
 
-## Проверка после деплоя
+## Post-Deployment Checks
 
-- Backend: `http://<SERVER_IP>:8000/` (админка `/admin/`).
-- Frontend: `http://<SERVER_IP>:3000/` (каталог `/products`, блог `/blog`, поиск).
+- Backend: `http://<SERVER_IP>:8000/` (admin at `/admin/`).
+- Frontend: `http://<SERVER_IP>:3000/` (catalog `/products`, blog `/blog`, search, checkout).
 - Swagger/Docs: `http://<SERVER_IP>:8000/api/docs/`.
+- Algolia autocomplete: ensure `NEXT_PUBLIC_ALGOLIA_*` env variables in `.env.local.frontend` are set to production values.
 
-Убедиться, что поисковые подсказки работают (нужны корректные Algolia переменные в `.env.local.frontend`).
+## Key Files
 
-## Структура репозитория (ключевые файлы)
+- `deploy/docker-compose.yml` — production docker-compose configuration.
+- `frontend/Dockerfile.prod` — Next.js production Dockerfile.
+- `deploy/.env.prod`, `deploy/.env.local.prod` — example environment templates for server use.
+- `docs/deployment-notes.md` — this document; keep it updated with operational changes.
 
-- `deploy/docker-compose.yml` — compose-конфигурация для прод-сборки.
-- `frontend/Dockerfile.prod` — Dockerfile для Next.js (prod).
-- `deploy/.env.prod`, `deploy/.env.local.prod` — prod конфиги (шаблоны для копирования на сервер).
-- `docs/deployment-notes.md` — текущий документ.
-
-## Примечания
-
-- Пароли и ключи хранить в менеджере паролей или в `.env` на сервере, **не** добавлять в git.
-- После изменения конфигов на сервере (например `.env.local.frontend`) обязательно перезапускать соответствующий сервис `docker compose restart <service>`.
-- Если каталог `/products` или поиск отдают пустую страницу — проверь значения `NEXT_PUBLIC_API_BASE_URL` и других URL в `.env.local.frontend` (должны указывать на адрес сервера, а не localhost).
