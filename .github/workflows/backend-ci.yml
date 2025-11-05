@@ -56,3 +56,6 @@ jobs:
 
       - name: Django system checks
         run: python backend/manage.py check
+
+      - name: Run pytest smoke suite
+        run: pytest --maxfail=1 --disable-warnings -m smoke
