@@ -135,6 +135,11 @@ cp frontend/.env.local.example frontend/.env.local
 
 Fill in the key parameters (JWT secret, Algolia credentials, database).
 
+> **Tip for Windows/WSL users:** the default `frontend/.env.local` now points to `http://host.docker.internal:8000`.  
+> If you open the dev server from another IP (e.g. `http://172.28.x.x:3000`), add that origin to
+> `NEXT_DEV_ALLOWED_ORIGINS` in `.env.local` so Next.js allows cross-origin dev connections:
+> `NEXT_DEV_ALLOWED_ORIGINS=http://172.28.224.1:3000`.
+
 ### 2. Run via Docker
 
 ```bash

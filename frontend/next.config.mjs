@@ -1,9 +1,18 @@
 ﻿/** @type {import('next').NextConfig} */
-const DEV_ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://172.25.96.1:3000",
-];
+const extraDevOrigins = (process.env.NEXT_DEV_ALLOWED_ORIGINS ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const DEV_ALLOWED_ORIGINS = Array.from(
+  new Set([
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://172.25.96.1:3000",
+    "http://host.docker.internal:3000",
+    ...extraDevOrigins,
+  ]),
+);
 
 const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 let backendHost = "localhost";
