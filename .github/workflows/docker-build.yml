@@ -62,6 +62,20 @@ jobs:
             ${{ env.BACKEND_IMAGE }}:${{ steps.vars.outputs.version }}
             ${{ steps.vars.outputs.latest_tag == 'true' && format('{0}:latest', env.BACKEND_IMAGE) || '' }}
 
+      - name: Smoke test backend image
+        run: |
+          docker run --rm \
+            -e DJANGO_SECRET_KEY=test-smoke \
+            -e DJANGO_DEBUG=0 \
+            -e DJANGO_ALLOWED_HOSTS=localhost \
+            -e DJANGO_TEST_USE_SQLITE=1 \
+            -e ALGOLIA_APP_ID=demo \
+            -e ALGOLIA_ADMIN_API_KEY=demo \
+            -e ALGOLIA_SEARCH_API_KEY=demo \
+            -e ALGOLIA_INDEX_NAME=shop_products \
+            ${{ env.BACKEND_IMAGE }}:${{ steps.vars.outputs.version }} \
+            python backend/manage.py check --deploy
+
       - name: Build & push frontend image
         uses: docker/build-push-action@v6
         with:
