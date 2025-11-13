@@ -46,3 +46,7 @@ tasks:
     desc: Install pre-commit hooks
     cmds:
       - "{{.PYTHON}} -m pre_commit install"
+  hooks:safe:
+    desc: Run pre-commit in an isolated worktree (no local changes)
+    cmds:
+      - "{{.PYTHON}} scripts/precommit_safe.py"

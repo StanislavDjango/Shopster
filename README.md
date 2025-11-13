@@ -229,6 +229,7 @@ Shopster/
    task lint
    task format:fix
    pre-commit run --all-files   # optional full sweep before the first push
+   task hooks:safe              # run hooks inside a temporary worktree (patch saved to tmp/ if fixes are needed)
    ```
 4. Commit with conventional messages and open a Pull Request. The CI pipelines (backend/frontend) must pass before merge.
 
