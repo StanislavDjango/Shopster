@@ -19,6 +19,16 @@
 
 > Store `.env` files securely on the server — do not commit them to Git.
 
+## CI/CD Automation Reference
+
+- **Docker build & push (`.github/workflows/docker-build.yml`)**: runs on pushes to `main`, tags `v*`, or manual dispatch. Requires `DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` secrets. Builds both images and runs a backend smoke test before pushing to Docker Hub.
+- **Backend CI / Frontend CI**: validate each PR/push with lint/build/test before merge.
+- **Release workflow**: pushing a tag `v*` generates a GitHub Release with changelog snippet and bundles docs.
+- **Lighthouse audit**: scheduled weekly run hitting the public storefront (non-blocking).
+- **Dependabot auto-merge**: patch dependency bumps from Dependabot are automatically merged once CI passes.
+
+> Manual override: from the Actions tab you can re-run `Build and Push Docker Images` to republish containers after updating secrets or environment files.
+
 ## Docker Workflow
 
 ### 1. Local Build
