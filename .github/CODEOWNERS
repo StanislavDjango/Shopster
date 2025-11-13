@@ -1,0 +1,14 @@
+# Default owner for everything
+*       @StanislavDjango
+
+# Backend (Django)
+/backend/            @StanislavDjango
+
+# Frontend (Next.js)
+/frontend/           @StanislavDjango
+
+# DevOps / workflows
+/.github/            @StanislavDjango
+Taskfile.yml         @StanislavDjango
+Dockerfile           @StanislavDjango
+docker-compose*.yml  @StanislavDjango

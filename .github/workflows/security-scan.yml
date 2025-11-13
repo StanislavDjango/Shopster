@@ -1,0 +1,42 @@
+name: Security Scan
+
+on:
+  push:
+    paths:
+      - "requirements*.txt"
+      - "frontend/package-lock.json"
+      - ".github/workflows/security-scan.yml"
+  pull_request:
+    paths:
+      - "requirements*.txt"
+      - "frontend/package-lock.json"
+      - ".github/workflows/security-scan.yml"
+  schedule:
+    - cron: "0 2 * * *"
+
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pip-audit
+        run: python -m pip install --upgrade pip pip-audit
+      - name: Run pip-audit
+        run: pip-audit -r requirements.txt --output text
+
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install deps (CI mode)
+        working-directory: frontend
+        run: npm ci --ignore-scripts
+      - name: Run npm audit (prod)
+        working-directory: frontend
+        run: npm audit --production
