@@ -8,6 +8,9 @@ env/
 venv/
 .python-version
 tmp/
+node_modules/
+frontend/node_modules/
+node_modules/.cache/
 
 # Django
 staticfiles/
