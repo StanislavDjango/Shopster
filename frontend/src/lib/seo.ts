@@ -3,7 +3,8 @@
 export const SITE_NAME = "Shopster";
 export const SITE_DESCRIPTION =
   "Shopster вЂ” РјРѕРґСѓР»СЊРЅС‹Р№ ecommerce: РєР°С‚Р°Р»РѕРі, РєРѕСЂР·РёРЅР°, Р·Р°РєР°Р·С‹, РїРѕРёСЃРє Рё Р°РІС‚РѕСЂРёР·Р°С†РёСЏ. Р’С‹Р±РёСЂР°Р№С‚Рµ Р»СѓС‡С€РёРµ С‚РѕРІР°СЂС‹ Рё РѕС„РѕСЂРјР»СЏР№С‚Рµ РїРѕРєСѓРїРєСѓ РѕРЅР»Р°Р№РЅ.";
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const DEFAULT_SITE_URL = "http://localhost:3000";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
 
 export function absoluteUrl(path: string): string {
   return new URL(path, SITE_URL).toString();
