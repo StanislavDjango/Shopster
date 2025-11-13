@@ -10,6 +10,12 @@ on:
 env:
   BACKEND_IMAGE: stanyslav/vebsaythub
   FRONTEND_IMAGE: stanyslav/vebsayt-frontend
+  NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+  NEXT_PUBLIC_BACKEND_ORIGIN: http://localhost:8000
+  NEXT_PUBLIC_SITE_URL: http://localhost:3000
+  NEXT_PUBLIC_ALGOLIA_APP_ID: ""
+  NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: ""
+  NEXT_PUBLIC_ALGOLIA_INDEX_NAME: shop_products
 
 jobs:
   build-and-push:
@@ -62,6 +68,13 @@ jobs:
           context: .
           file: frontend/Dockerfile.prod
           push: true
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=${{ env.NEXT_PUBLIC_API_BASE_URL }}
+            NEXT_PUBLIC_BACKEND_ORIGIN=${{ env.NEXT_PUBLIC_BACKEND_ORIGIN }}
+            NEXT_PUBLIC_SITE_URL=${{ env.NEXT_PUBLIC_SITE_URL }}
+            NEXT_PUBLIC_ALGOLIA_APP_ID=${{ env.NEXT_PUBLIC_ALGOLIA_APP_ID }}
+            NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY=${{ env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY }}
+            NEXT_PUBLIC_ALGOLIA_INDEX_NAME=${{ env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME }}
           tags: |
             ${{ env.FRONTEND_IMAGE }}:${{ steps.vars.outputs.version }}
             ${{ steps.vars.outputs.latest_tag == 'true' && format('{0}:latest', env.FRONTEND_IMAGE) || '' }}
