@@ -12,13 +12,15 @@ export default function CheckoutPage() {
   const session = useSession();
   const router = useRouter();
 
-  const { items, subtotal, totalItems, loadCart, checkout } = useCartStore((state) => ({
-    items: state.items,
-    subtotal: state.subtotal,
-    totalItems: state.totalItems,
-    loadCart: state.loadCart,
-    checkout: state.checkout,
-  }));
+  const { items, subtotal, totalItems, loadCart, checkout } = useCartStore(
+    (state) => ({
+      items: state.items,
+      subtotal: state.subtotal,
+      totalItems: state.totalItems,
+      loadCart: state.loadCart,
+      checkout: state.checkout,
+    }),
+  );
 
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -32,7 +34,9 @@ export default function CheckoutPage() {
       <section className="section">
         <div className="container auth-card">
           <h1>Cart is empty</h1>
-          <p className="auth-subtitle">Add products before proceeding to checkout.</p>
+          <p className="auth-subtitle">
+            Add products before proceeding to checkout.
+          </p>
           <Link className="btn btn-primary auth-submit" href="/products">
             Back to catalog
           </Link>
@@ -42,7 +46,10 @@ export default function CheckoutPage() {
   }
 
   const defaultEmail = session.data?.user?.email ?? "";
-  const defaultName = [session.data?.user?.first_name, session.data?.user?.last_name]
+  const defaultName = [
+    session.data?.user?.first_name,
+    session.data?.user?.last_name,
+  ]
     .filter(Boolean)
     .join(" ");
 
@@ -58,7 +65,9 @@ export default function CheckoutPage() {
     const orderPayload: CheckoutPayload = {
       customer_email: String(formData.get("customer_email") || "").trim(),
       customer_phone: optional(formData.get("customer_phone")),
-      shipping_full_name: String(formData.get("shipping_full_name") || "").trim(),
+      shipping_full_name: String(
+        formData.get("shipping_full_name") || "",
+      ).trim(),
       shipping_address: String(formData.get("shipping_address") || "").trim(),
       shipping_city: String(formData.get("shipping_city") || "").trim(),
       shipping_postcode: optional(formData.get("shipping_postcode")),
@@ -81,7 +90,9 @@ export default function CheckoutPage() {
         }
         router.push(`/checkout/success?${params.toString()}`);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to submit order.");
+        setError(
+          err instanceof Error ? err.message : "Failed to submit order.",
+        );
       }
     });
   };
@@ -117,7 +128,11 @@ export default function CheckoutPage() {
               </label>
               <label className="auth-field">
                 <span>Phone</span>
-                <input name="customer_phone" type="tel" placeholder="+1 555 123-4567" />
+                <input
+                  name="customer_phone"
+                  type="tel"
+                  placeholder="+1 555 123-4567"
+                />
               </label>
             </div>
 
@@ -125,7 +140,11 @@ export default function CheckoutPage() {
             <div className="auth-field-inline">
               <label className="auth-field">
                 <span>Address</span>
-                <input name="shipping_address" placeholder="123 Main St" required />
+                <input
+                  name="shipping_address"
+                  placeholder="123 Main St"
+                  required
+                />
               </label>
               <label className="auth-field">
                 <span>City</span>
@@ -145,12 +164,20 @@ export default function CheckoutPage() {
 
             <label className="auth-field">
               <span>Order notes</span>
-              <textarea name="notes" rows={4} placeholder="Delivery instructions" />
+              <textarea
+                name="notes"
+                rows={4}
+                placeholder="Delivery instructions"
+              />
             </label>
 
             {error && <p className="auth-error">{error}</p>}
 
-            <button className="btn btn-primary auth-submit" type="submit" disabled={isPending}>
+            <button
+              className="btn btn-primary auth-submit"
+              type="submit"
+              disabled={isPending}
+            >
               {isPending ? "Submitting..." : "Place order"}
             </button>
           </form>
@@ -172,9 +199,9 @@ export default function CheckoutPage() {
               <span>{formatCurrency(currency, subtotal)}</span>
             </div>
             <p className="checkout-summary__hint">
-              A confirmation email will be sent once the order is placed. Guest checkouts receive an
-              additional email with a link to set a password and activate the automatically created
-              account.
+              A confirmation email will be sent once the order is placed. Guest
+              checkouts receive an additional email with a link to set a
+              password and activate the automatically created account.
             </p>
           </aside>
         </div>

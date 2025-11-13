@@ -17,7 +17,8 @@ function buildImageUrl(imageUrl: string | undefined): string | undefined {
     if (imageUrl.startsWith("http")) {
       return imageUrl;
     }
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+    const base =
+      process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
     return new URL(imageUrl, base).toString();
   } catch {
     return undefined;
@@ -48,9 +49,13 @@ export async function generateMetadata({
 
   const title = product.meta_title || product.name;
   const description =
-    product.meta_description || product.short_description || product.description || SITE_NAME;
+    product.meta_description ||
+    product.short_description ||
+    product.description ||
+    SITE_NAME;
   const canonical = absoluteUrl(`/products/${product.slug}`);
-  const mainImage = product.images.find((image) => image.is_main) ?? product.images[0];
+  const mainImage =
+    product.images.find((image) => image.is_main) ?? product.images[0];
   const ogImage = buildImageUrl(mainImage?.image) ?? DEFAULT_OG_IMAGE;
 
   return {
@@ -81,10 +86,15 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const product = await loadProduct(slug);
-  const mainImage = product.images.find((img) => img.is_main) ?? product.images[0];
+  const mainImage =
+    product.images.find((img) => img.is_main) ?? product.images[0];
   const imageUrl = buildImageUrl(mainImage?.image);
   const description = product.description || product.short_description || "";
 
@@ -104,7 +114,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <p className="lead">{description}</p>
             <div className="cta-buttons">
               <span className="btn price-badge">
-                {formatCurrency(product.currency ?? "RUB", Number(product.price))}
+                {formatCurrency(
+                  product.currency ?? "RUB",
+                  Number(product.price),
+                )}
               </span>
               <AddToCartButton productId={product.id} />
               <span className="btn btn-outline">In stock: {product.stock}</span>
@@ -112,7 +125,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <p>SKU: {product.sku}</p>
             {product.category && <p>Category: {product.category.name}</p>}
             {product.meta_keywords && (
-              <p className="product-keywords">Keywords: {product.meta_keywords}</p>
+              <p className="product-keywords">
+                Keywords: {product.meta_keywords}
+              </p>
             )}
           </div>
           <div className="hero-card" style={{ padding: 0, overflow: "hidden" }}>

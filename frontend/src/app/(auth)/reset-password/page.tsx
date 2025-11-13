@@ -34,11 +34,19 @@ function ResetPasswordContent() {
     startTransition(async () => {
       setError(null);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/password/reset/confirm/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid, token, password, password_confirm: passwordConfirm }),
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/auth/password/reset/confirm/`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              uid,
+              token,
+              password,
+              password_confirm: passwordConfirm,
+            }),
+          },
+        );
         if (!response.ok) {
           const data = await response.json().catch(() => ({}));
           const message =
@@ -51,7 +59,9 @@ function ResetPasswordContent() {
         }
         setCompleted(true);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to update password.");
+        setError(
+          err instanceof Error ? err.message : "Failed to update password.",
+        );
       }
     });
   };
@@ -77,8 +87,13 @@ function ResetPasswordContent() {
       <section className="section">
         <div className="container auth-card">
           <h1>Password updated</h1>
-          <p className="auth-subtitle">You can now sign in using your new password.</p>
-          <button className="btn btn-primary auth-submit" onClick={() => router.push("/signin")}>
+          <p className="auth-subtitle">
+            You can now sign in using your new password.
+          </p>
+          <button
+            className="btn btn-primary auth-submit"
+            onClick={() => router.push("/signin")}
+          >
             Go to sign in
           </button>
         </div>
@@ -94,7 +109,13 @@ function ResetPasswordContent() {
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="auth-field">
             <span>New password</span>
-            <input name="password" type="password" placeholder="••••••••" required minLength={6} />
+            <input
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              minLength={6}
+            />
           </label>
           <label className="auth-field">
             <span>Confirm password</span>
@@ -107,7 +128,11 @@ function ResetPasswordContent() {
             />
           </label>
           {error && <p className="auth-error">{error}</p>}
-          <button className="btn btn-primary auth-submit" type="submit" disabled={isPending}>
+          <button
+            className="btn btn-primary auth-submit"
+            type="submit"
+            disabled={isPending}
+          >
             {isPending ? "Saving..." : "Update password"}
           </button>
         </form>

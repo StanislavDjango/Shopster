@@ -32,7 +32,10 @@ export function AccountMenu() {
       <Link href="/account" className="account-menu__link">
         {displayName || user.email}
       </Link>
-      <button className="btn btn-outline nav-auth" onClick={() => signOut({ callbackUrl: "/" })}>
+      <button
+        className="btn btn-outline nav-auth"
+        onClick={() => signOut({ callbackUrl: "/" })}
+      >
         Sign out
       </button>
     </div>

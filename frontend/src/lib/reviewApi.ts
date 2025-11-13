@@ -9,7 +9,8 @@ type ReviewsResponse = {
   count: number;
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 function parseNextPage(next: string | null): number | null {
   if (!next) {
@@ -105,7 +106,10 @@ export async function updateProductReview(
   return handleResponse<ProductReview>(response);
 }
 
-export async function deleteProductReview(reviewId: number, accessToken?: string): Promise<void> {
+export async function deleteProductReview(
+  reviewId: number,
+  accessToken?: string,
+): Promise<void> {
   const url = new URL(`/api/reviews/${reviewId}/`, API_BASE);
   const response = await fetch(url.toString(), {
     method: "DELETE",
@@ -116,7 +120,8 @@ export async function deleteProductReview(reviewId: number, accessToken?: string
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    const message = body?.detail || response.statusText || "Failed to delete review.";
+    const message =
+      body?.detail || response.statusText || "Failed to delete review.";
     throw new Error(message);
   }
 }

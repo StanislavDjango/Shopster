@@ -61,7 +61,9 @@ export default function SignUpPage() {
         });
 
         if (result?.error) {
-          setError("Account created but automatic sign-in failed. Please log in manually.");
+          setError(
+            "Account created but automatic sign-in failed. Please log in manually.",
+          );
           router.push("/signin");
           return;
         }
@@ -78,15 +80,28 @@ export default function SignUpPage() {
     <section className="section">
       <div className="container auth-card">
         <h1>Create account</h1>
-        <p className="auth-subtitle">Sign up to manage your orders, addresses and discounts.</p>
+        <p className="auth-subtitle">
+          Sign up to manage your orders, addresses and discounts.
+        </p>
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="auth-field">
             <span>Username</span>
-            <input name="username" type="text" placeholder="myshopper" required minLength={2} />
+            <input
+              name="username"
+              type="text"
+              placeholder="myshopper"
+              required
+              minLength={2}
+            />
           </label>
           <label className="auth-field">
             <span>Email</span>
-            <input name="email" type="email" placeholder="user@example.com" required />
+            <input
+              name="email"
+              type="email"
+              placeholder="user@example.com"
+              required
+            />
           </label>
           <div className="auth-field-inline">
             <label className="auth-field">
@@ -100,7 +115,13 @@ export default function SignUpPage() {
           </div>
           <label className="auth-field">
             <span>Password</span>
-            <input name="password" type="password" placeholder="••••••••" required minLength={6} />
+            <input
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              minLength={6}
+            />
           </label>
           <label className="auth-field">
             <span>Confirm password</span>
@@ -113,7 +134,11 @@ export default function SignUpPage() {
             />
           </label>
           {error && <p className="auth-error">{error}</p>}
-          <button className="btn btn-primary auth-submit" type="submit" disabled={isPending}>
+          <button
+            className="btn btn-primary auth-submit"
+            type="submit"
+            disabled={isPending}
+          >
             {isPending ? "Creating..." : "Create account"}
           </button>
         </form>

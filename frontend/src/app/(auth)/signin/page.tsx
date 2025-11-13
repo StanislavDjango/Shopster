@@ -41,7 +41,8 @@ export default function SignInPage() {
       <div className="container auth-card">
         <h1>Sign in</h1>
         <p className="auth-subtitle">
-          Use the email (or username) and password specified during registration.
+          Use the email (or username) and password specified during
+          registration.
         </p>
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="auth-field">
@@ -56,10 +57,20 @@ export default function SignInPage() {
           </label>
           <label className="auth-field">
             <span>Password</span>
-            <input name="password" type="password" placeholder="••••••••" required minLength={6} />
+            <input
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              minLength={6}
+            />
           </label>
           {error && <p className="auth-error">{error}</p>}
-          <button className="btn btn-primary auth-submit" type="submit" disabled={isPending}>
+          <button
+            className="btn btn-primary auth-submit"
+            type="submit"
+            disabled={isPending}
+          >
             {isPending ? "Signing in..." : "Sign in"}
           </button>
         </form>

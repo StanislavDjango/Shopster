@@ -750,7 +750,11 @@ a {
   border: 1px solid rgba(148, 163, 184, 0.25);
   border-radius: 1.25rem;
   padding: 1.5rem;
-  background: linear-gradient(160deg, rgba(248, 250, 252, 0.85), rgba(255, 255, 255, 0.95));
+  background: linear-gradient(
+    160deg,
+    rgba(248, 250, 252, 0.85),
+    rgba(255, 255, 255, 0.95)
+  );
 }
 
 .cart-item__info {

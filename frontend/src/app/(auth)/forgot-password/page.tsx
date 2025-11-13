@@ -24,17 +24,24 @@ export default function ForgotPasswordPage() {
     startTransition(async () => {
       setError(null);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/password/reset/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/auth/password/reset/`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          },
+        );
         if (!response.ok) {
-          throw new Error("Failed to send reset email. Please try again later.");
+          throw new Error(
+            "Failed to send reset email. Please try again later.",
+          );
         }
         setSubmitted(true);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to send reset email.");
+        setError(
+          err instanceof Error ? err.message : "Failed to send reset email.",
+        );
       }
     });
   };
@@ -45,10 +52,14 @@ export default function ForgotPasswordPage() {
         <div className="container auth-card">
           <h1>Check your inbox</h1>
           <p className="auth-subtitle">
-            If the address is registered, we have sent instructions for resetting your password.
-            Please check spam if you cannot find the message.
+            If the address is registered, we have sent instructions for
+            resetting your password. Please check spam if you cannot find the
+            message.
           </p>
-          <button className="btn btn-primary auth-submit" onClick={() => router.push("/signin")}>
+          <button
+            className="btn btn-primary auth-submit"
+            onClick={() => router.push("/signin")}
+          >
             Back to sign in
           </button>
         </div>
@@ -61,15 +72,25 @@ export default function ForgotPasswordPage() {
       <div className="container auth-card">
         <h1>Forgot password?</h1>
         <p className="auth-subtitle">
-          Enter the email you used during registration. We will send a recovery link.
+          Enter the email you used during registration. We will send a recovery
+          link.
         </p>
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="auth-field">
             <span>Email</span>
-            <input name="email" type="email" placeholder="user@example.com" required />
+            <input
+              name="email"
+              type="email"
+              placeholder="user@example.com"
+              required
+            />
           </label>
           {error && <p className="auth-error">{error}</p>}
-          <button className="btn btn-primary auth-submit" type="submit" disabled={isPending}>
+          <button
+            className="btn btn-primary auth-submit"
+            type="submit"
+            disabled={isPending}
+          >
             {isPending ? "Sending..." : "Send recovery link"}
           </button>
         </form>

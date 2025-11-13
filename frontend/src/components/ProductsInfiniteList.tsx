@@ -93,7 +93,9 @@ export function ProductsInfiniteList({
         throw new Error(DEFAULT_ERROR_MESSAGE);
       }
       const data = await response.json();
-      const newItems: Product[] = Array.isArray(data.results) ? data.results : data;
+      const newItems: Product[] = Array.isArray(data.results)
+        ? data.results
+        : data;
       setItems((prev) => [...prev, ...newItems]);
       setNextPage(extractNextPage(data.next, apiBaseUrl));
       if (typeof data.count === "number") {

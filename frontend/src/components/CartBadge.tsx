@@ -19,7 +19,9 @@ export function CartBadge() {
   return (
     <Link href="/cart" className="cart-badge">
       Cart
-      {totalItems > 0 && <span className="cart-badge__count">{totalItems}</span>}
+      {totalItems > 0 && (
+        <span className="cart-badge__count">{totalItems}</span>
+      )}
     </Link>
   );
 }

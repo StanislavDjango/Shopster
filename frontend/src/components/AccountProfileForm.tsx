@@ -40,10 +40,13 @@ export function AccountProfileForm({ initialData }: Props) {
       last_name: formData.get("last_name") || "",
       profile: {
         phone: formData.get("phone") || "",
-        default_shipping_address: formData.get("default_shipping_address") || "",
+        default_shipping_address:
+          formData.get("default_shipping_address") || "",
         default_shipping_city: formData.get("default_shipping_city") || "",
-        default_shipping_postcode: formData.get("default_shipping_postcode") || "",
-        default_shipping_country: formData.get("default_shipping_country") || "",
+        default_shipping_postcode:
+          formData.get("default_shipping_postcode") || "",
+        default_shipping_country:
+          formData.get("default_shipping_country") || "",
       },
     };
 
@@ -85,15 +88,27 @@ export function AccountProfileForm({ initialData }: Props) {
       <div className="profile-grid">
         <label className="auth-field">
           <span>First name</span>
-          <input name="first_name" defaultValue={initialData.first_name ?? ""} placeholder="John" />
+          <input
+            name="first_name"
+            defaultValue={initialData.first_name ?? ""}
+            placeholder="John"
+          />
         </label>
         <label className="auth-field">
           <span>Last name</span>
-          <input name="last_name" defaultValue={initialData.last_name ?? ""} placeholder="Doe" />
+          <input
+            name="last_name"
+            defaultValue={initialData.last_name ?? ""}
+            placeholder="Doe"
+          />
         </label>
         <label className="auth-field">
           <span>Phone</span>
-          <input name="phone" defaultValue={profile.phone ?? ""} placeholder="+1 555 123-4567" />
+          <input
+            name="phone"
+            defaultValue={profile.phone ?? ""}
+            placeholder="+1 555 123-4567"
+          />
         </label>
         <label className="auth-field">
           <span>Shipping address</span>
@@ -130,7 +145,11 @@ export function AccountProfileForm({ initialData }: Props) {
       </div>
       {message && <p className="profile-success">{message}</p>}
       {error && <p className="auth-error">{error}</p>}
-      <button className="btn btn-primary auth-submit" type="submit" disabled={isSaving}>
+      <button
+        className="btn btn-primary auth-submit"
+        type="submit"
+        disabled={isSaving}
+      >
         {isSaving ? "Saving..." : "Save changes"}
       </button>
     </form>

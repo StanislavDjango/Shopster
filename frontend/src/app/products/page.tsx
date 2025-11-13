@@ -35,7 +35,14 @@ function sanitizeOrdering(value?: string): string | undefined {
   if (!value) {
     return undefined;
   }
-  const allowed = new Set(["price", "-price", "name", "-name", "created_at", "-created_at"]);
+  const allowed = new Set([
+    "price",
+    "-price",
+    "name",
+    "-name",
+    "created_at",
+    "-created_at",
+  ]);
   return allowed.has(value) ? value : undefined;
 }
 
@@ -50,13 +57,16 @@ function sanitizeSearch(value?: string): string | undefined {
   return trimmed.slice(0, 120);
 }
 
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({
+  searchParams,
+}: ProductsPageProps) {
   const params = searchParams ? await searchParams : {};
   const category = normalizeParam(params.category);
   const minPrice = sanitizePrice(normalizeParam(params.min_price));
   const maxPrice = sanitizePrice(normalizeParam(params.max_price));
   const rawInStock = normalizeParam(params.in_stock);
-  const inStock = rawInStock === "true" || rawInStock === "1" ? "true" : undefined;
+  const inStock =
+    rawInStock === "true" || rawInStock === "1" ? "true" : undefined;
   const ordering = sanitizeOrdering(normalizeParam(params.ordering));
   const searchTerm = sanitizeSearch(normalizeParam(params.search));
 
@@ -91,14 +101,20 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <h1>Catalog</h1>
             {searchTerm ? (
               <p>
-                Showing results for <strong>{searchTerm}</strong>. Adjust filters to refine the
-                list.
+                Showing results for <strong>{searchTerm}</strong>. Adjust
+                filters to refine the list.
               </p>
             ) : (
-              <p>Products are synced from Django. Use search and filters to navigate quickly.</p>
+              <p>
+                Products are synced from Django. Use search and filters to
+                navigate quickly.
+              </p>
             )}
           </div>
-          <CatalogFilters categories={categories} initialValues={filterValues} />
+          <CatalogFilters
+            categories={categories}
+            initialValues={filterValues}
+          />
         </div>
         <ProductsInfiniteList
           initialItems={initialPage.items}

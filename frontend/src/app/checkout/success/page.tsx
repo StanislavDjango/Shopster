@@ -14,13 +14,18 @@ function CheckoutSuccessContent() {
       <div className="container auth-card">
         <h1>Thank you!</h1>
         <p className="auth-subtitle">
-          {orderId ? `Order #${orderId} has been placed.` : "Your order has been placed."}
+          {orderId
+            ? `Order #${orderId} has been placed.`
+            : "Your order has been placed."}
         </p>
-        <p className="auth-subtitle">We will contact you soon to confirm the details.</p>
+        <p className="auth-subtitle">
+          We will contact you soon to confirm the details.
+        </p>
         {activationEmail && (
           <p className="auth-subtitle">
-            We have created an account for you. Check <strong>{activationEmail}</strong> for a link
-            to set your password and start tracking your orders.
+            We have created an account for you. Check{" "}
+            <strong>{activationEmail}</strong> for a link to set your password
+            and start tracking your orders.
           </p>
         )}
         <div className="checkout-success__actions">

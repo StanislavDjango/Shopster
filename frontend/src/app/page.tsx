@@ -15,7 +15,8 @@ const FEATURE_CARDS = [
   },
   {
     title: "Algolia search",
-    description: "Instant search with facets, typo tolerance and configurable ranking.",
+    description:
+      "Instant search with facets, typo tolerance and configurable ranking.",
   },
   {
     title: "Next.js storefront",
@@ -39,10 +40,13 @@ export default async function HomePage() {
         <div className="container hero-grid">
           <div className="hero-card">
             <span className="highlight">New headless storefront</span>
-            <h1>Launch a modern commerce stack with Next.js and Algolia search</h1>
+            <h1>
+              Launch a modern commerce stack with Next.js and Algolia search
+            </h1>
             <p className="lead">
-              The catalog is powered by Django REST API, the search is backed by Algolia. Extend the
-              platform with payments, analytics, and custom experiences when you are ready.
+              The catalog is powered by Django REST API, the search is backed by
+              Algolia. Extend the platform with payments, analytics, and custom
+              experiences when you are ready.
             </p>
             <div className="cta-buttons">
               <Link className="btn btn-primary" href="/products">
@@ -59,7 +63,9 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="highlight-grid">
-            <div className="highlight">Automatic sync from Django to Algolia</div>
+            <div className="highlight">
+              Automatic sync from Django to Algolia
+            </div>
             <div className="highlight">
               Instant results with category facets and relevance tuning
             </div>
@@ -73,7 +79,8 @@ export default async function HomePage() {
           <div className="section-header">
             <h2>What is included</h2>
             <p>
-              Django API, Algolia indexing pipeline, Next.js frontend and Dockerised infrastructure.
+              Django API, Algolia indexing pipeline, Next.js frontend and
+              Dockerised infrastructure.
             </p>
           </div>
           <div className="feature-grid">
@@ -92,8 +99,8 @@ export default async function HomePage() {
           <div className="section-header">
             <h2>Featured products</h2>
             <p>
-              Data comes straight from the Django API. Adjust the selection to match your
-              merchandising strategy.
+              Data comes straight from the Django API. Adjust the selection to
+              match your merchandising strategy.
             </p>
           </div>
           <div className="product-grid">

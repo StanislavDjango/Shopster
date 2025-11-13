@@ -1,7 +1,13 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import { useSession } from "next-auth/react";
 
 import type { ProductReview } from "@/types/product";
@@ -132,7 +138,9 @@ export function ProductReviews({
   userReview,
 }: ProductReviewsProps) {
   const { status: sessionStatus, data: session } = useSession();
-  const [isAuthenticated, setIsAuthenticated] = useState(sessionStatus === "authenticated");
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    sessionStatus === "authenticated",
+  );
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [nextPage, setNextPage] = useState<number | null>(1);
   const [totalCount, setTotalCount] = useState<number>(reviewsCount);
@@ -140,7 +148,9 @@ export function ProductReviews({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [formVisible, setFormVisible] = useState<boolean>(false);
-  const [editingReview, setEditingReview] = useState<ProductReview | null>(null);
+  const [editingReview, setEditingReview] = useState<ProductReview | null>(
+    null,
+  );
   const [form, setForm] = useState<ReviewFormState>(() => {
     if (userReview) {
       return {
@@ -185,7 +195,9 @@ export function ProductReviews({
         setNextPage(next);
         setTotalCount(count);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Не удалось загрузить отзывы.");
+        setError(
+          err instanceof Error ? err.message : "Не удалось загрузить отзывы.",
+        );
       } finally {
         setLoading(false);
       }
@@ -220,7 +232,9 @@ export function ProductReviews({
           },
           accessToken,
         );
-        setReviews((prev) => prev.map((review) => (review.id === updated.id ? updated : review)));
+        setReviews((prev) =>
+          prev.map((review) => (review.id === updated.id ? updated : review)),
+        );
         resetForm();
       } else {
         const payload: Parameters<typeof createProductReview>[0] = {
@@ -236,7 +250,10 @@ export function ProductReviews({
           }
         }
         const created = await createProductReview(payload, accessToken);
-        setReviews((prev) => [created, ...prev.filter((review) => review.id !== created.id)]);
+        setReviews((prev) => [
+          created,
+          ...prev.filter((review) => review.id !== created.id),
+        ]);
         setTotalCount((prev) => prev + 1);
         setNextPage(nextPage ?? null);
         setFormVisible(false);
@@ -244,7 +261,9 @@ export function ProductReviews({
         setForm({ ...initialFormState });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Не удалось сохранить отзыв.");
+      setError(
+        err instanceof Error ? err.message : "Не удалось сохранить отзыв.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -274,7 +293,9 @@ export function ProductReviews({
       setFormVisible(false);
       setEditingReview(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Не удалось удалить отзыв.");
+      setError(
+        err instanceof Error ? err.message : "Не удалось удалить отзыв.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -303,7 +324,10 @@ export function ProductReviews({
       {error && <p className="product-reviews__error">{error}</p>}
 
       {canSubmitReview && !formVisible && (
-        <button className="btn btn-primary" onClick={() => setFormVisible(true)}>
+        <button
+          className="btn btn-primary"
+          onClick={() => setFormVisible(true)}
+        >
           Написать отзыв
         </button>
       )}
@@ -332,7 +356,9 @@ export function ProductReviews({
               <StarRating
                 value={form.rating}
                 disabled={submitting}
-                onChange={(next) => setForm((prev) => ({ ...prev, rating: next }))}
+                onChange={(next) =>
+                  setForm((prev) => ({ ...prev, rating: next }))
+                }
               />
             </label>
             {!isAuthenticated && (
@@ -342,7 +368,10 @@ export function ProductReviews({
                   type="text"
                   value={form.authorName}
                   onChange={(event) =>
-                    setForm((prev) => ({ ...prev, authorName: event.target.value }))
+                    setForm((prev) => ({
+                      ...prev,
+                      authorName: event.target.value,
+                    }))
                   }
                   placeholder="\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u044c\u0442\u0435\u0441\u044c, \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u0438\u043c\u044f \u0440\u044f\u0434\u043e\u043c \u0441 \u043e\u0442\u0437\u044b\u0432\u043e\u043c"
                   disabled={submitting}
@@ -356,7 +385,9 @@ export function ProductReviews({
               <input
                 type="text"
                 value={form.title}
-                onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, title: event.target.value }))
+                }
                 placeholder="Коротко о впечатлении"
                 disabled={submitting}
                 maxLength={120}
@@ -366,7 +397,9 @@ export function ProductReviews({
               <span>Отзыв</span>
               <textarea
                 value={form.body}
-                onChange={(event) => setForm((prev) => ({ ...prev, body: event.target.value }))}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, body: event.target.value }))
+                }
                 rows={4}
                 placeholder="Поделитесь опытом покупки и использования"
                 disabled={submitting}
@@ -391,7 +424,8 @@ export function ProductReviews({
             </button>
           </div>
           <p className="product-reviews__note">
-            Отправленный отзыв попадёт на модерацию. О публикации мы сообщим письмом.
+            Отправленный отзыв попадёт на модерацию. О публикации мы сообщим
+            письмом.
           </p>
         </div>
       )}
@@ -400,17 +434,23 @@ export function ProductReviews({
         {reviews.map((review) => (
           <li key={review.id} className="product-review-card">
             <div className="product-review-card__header">
-              <strong>{review.user?.name ?? "\u0413\u043e\u0441\u0442\u044c"}</strong>
+              <strong>
+                {review.user?.name ?? "\u0413\u043e\u0441\u0442\u044c"}
+              </strong>
               <span className="product-review-card__rating">{`${review.rating} ★`}</span>
             </div>
             <div className="product-review-card__meta">
               <span>{formatDate(review.created_at)}</span>
-              {review.verified_purchase && <span className="tag">Проверенная покупка</span>}
+              {review.verified_purchase && (
+                <span className="tag">Проверенная покупка</span>
+              )}
               <span className={`tag tag--${review.moderation_status}`}>
                 {moderationLabel(review.moderation_status)}
               </span>
             </div>
-            {review.title && <h4 className="product-review-card__title">{review.title}</h4>}
+            {review.title && (
+              <h4 className="product-review-card__title">{review.title}</h4>
+            )}
             <p className="product-review-card__body">{review.body}</p>
             {review.is_owner && (
               <div className="product-review-card__actions">
@@ -435,7 +475,11 @@ export function ProductReviews({
       </ul>
 
       {hasMore && (
-        <button className="btn btn-secondary" onClick={handleLoadMore} disabled={loading}>
+        <button
+          className="btn btn-secondary"
+          onClick={handleLoadMore}
+          disabled={loading}
+        >
           {loading ? "Загружаем..." : "Показать ещё"}
         </button>
       )}

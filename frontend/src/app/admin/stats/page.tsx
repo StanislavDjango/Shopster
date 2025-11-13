@@ -72,7 +72,9 @@ export default async function AdminStatsPage({ searchParams }: StatsPageProps) {
       <section className="section">
         <div className="container admin-stats">
           <h1>Admin dashboard</h1>
-          <p className="stats-error">Failed to load statistics. Please try again later.</p>
+          <p className="stats-error">
+            Failed to load statistics. Please try again later.
+          </p>
         </div>
       </section>
     );
@@ -87,7 +89,9 @@ export default async function AdminStatsPage({ searchParams }: StatsPageProps) {
         <div className="stats-header">
           <div>
             <h1>Admin dashboard</h1>
-            <p className="stats-description">Sales overview and product performance.</p>
+            <p className="stats-description">
+              Sales overview and product performance.
+            </p>
           </div>
         </div>
 
@@ -150,7 +154,9 @@ export default async function AdminStatsPage({ searchParams }: StatsPageProps) {
         <div className="stats-section">
           <h2>Top products</h2>
           {stats.top_products.length === 0 ? (
-            <p className="stats-empty">No products sold during the selected period.</p>
+            <p className="stats-empty">
+              No products sold during the selected period.
+            </p>
           ) : (
             <table className="stats-table">
               <thead>

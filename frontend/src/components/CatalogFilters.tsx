@@ -39,7 +39,10 @@ function buildQueryString(values: CatalogFilterValues) {
   return params.toString();
 }
 
-export function CatalogFilters({ categories, initialValues }: CatalogFiltersProps) {
+export function CatalogFilters({
+  categories,
+  initialValues,
+}: CatalogFiltersProps) {
   const router = useRouter();
   const sortedCategories = useMemo(
     () => [...categories].sort((a, b) => a.name.localeCompare(b.name)),
@@ -111,7 +114,11 @@ export function CatalogFilters({ categories, initialValues }: CatalogFiltersProp
         />
       </label>
       <label className="catalog-filters__checkbox">
-        <input type="checkbox" name="in_stock" defaultChecked={initialValues.in_stock === "true"} />
+        <input
+          type="checkbox"
+          name="in_stock"
+          defaultChecked={initialValues.in_stock === "true"}
+        />
         <span>In stock</span>
       </label>
       <label>
@@ -128,7 +135,11 @@ export function CatalogFilters({ categories, initialValues }: CatalogFiltersProp
         <button type="submit" className="btn btn-primary">
           Apply
         </button>
-        <button type="button" className="btn btn-secondary" onClick={handleReset}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleReset}
+        >
           Reset
         </button>
       </div>

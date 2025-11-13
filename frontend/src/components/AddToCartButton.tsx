@@ -22,7 +22,8 @@ export function AddToCartButton({ productId, variant = "primary" }: Props) {
     }
   };
 
-  const className = variant === "primary" ? "btn btn-primary" : "btn btn-outline";
+  const className =
+    variant === "primary" ? "btn btn-primary" : "btn btn-outline";
 
   return (
     <button className={className} onClick={handleClick} disabled={pending}>

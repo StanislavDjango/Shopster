@@ -54,9 +54,11 @@ export async function GET() {
     { loc: absoluteUrl("/forgot-password") },
   ];
 
-  const products = await fetchAll<{ slug?: string; updated_at?: string; modified?: string }>(
-    "/api/products/?page_size=100",
-  );
+  const products = await fetchAll<{
+    slug?: string;
+    updated_at?: string;
+    modified?: string;
+  }>("/api/products/?page_size=100");
 
   const now = new Date().toISOString();
   for (const product of products) {

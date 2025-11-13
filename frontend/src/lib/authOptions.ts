@@ -48,13 +48,16 @@ function decodeJwt(token: string): DecodedJWT {
 }
 
 async function login(identifier: string, password: string) {
-  const loginData = await fetchJson<LoginResponse>(`${API_BASE_URL}/api/auth/login/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const loginData = await fetchJson<LoginResponse>(
+    `${API_BASE_URL}/api/auth/login/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: identifier, password }),
     },
-    body: JSON.stringify({ username: identifier, password }),
-  });
+  );
 
   const user = await fetchJson<BackendUser>(`${API_BASE_URL}/api/auth/me/`, {
     headers: {

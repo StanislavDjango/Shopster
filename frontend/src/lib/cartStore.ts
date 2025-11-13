@@ -183,7 +183,9 @@ export const useCartStore = create<CartState>()(
         };
 
         let cartId = await get().ensureCart();
-        const existing = get().items.find((item) => item.product.id === productId);
+        const existing = get().items.find(
+          (item) => item.product.id === productId,
+        );
         try {
           if (existing) {
             return get().updateItem(existing.id, existing.quantity + quantity);
@@ -208,7 +210,12 @@ export const useCartStore = create<CartState>()(
           }
           await get().loadCart();
         } catch (err) {
-          set({ error: err instanceof Error ? err.message : "Failed to add product to cart." });
+          set({
+            error:
+              err instanceof Error
+                ? err.message
+                : "Failed to add product to cart.",
+          });
           throw err;
         }
       },
@@ -220,11 +227,14 @@ export const useCartStore = create<CartState>()(
         }
         const safeQty = Math.max(1, quantity);
         try {
-          const response = await fetch(`${API_BASE_URL}/api/carts/${cartId}/items/${itemId}/`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ quantity: safeQty }),
-          });
+          const response = await fetch(
+            `${API_BASE_URL}/api/carts/${cartId}/items/${itemId}/`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ quantity: safeQty }),
+            },
+          );
           if (!response.ok) {
             if (response.status === 404) {
               resetCartState();
@@ -234,7 +244,10 @@ export const useCartStore = create<CartState>()(
           }
           await get().loadCart();
         } catch (err) {
-          set({ error: err instanceof Error ? err.message : "Failed to update cart." });
+          set({
+            error:
+              err instanceof Error ? err.message : "Failed to update cart.",
+          });
           throw err;
         }
       },
@@ -245,9 +258,12 @@ export const useCartStore = create<CartState>()(
           return;
         }
         try {
-          const response = await fetch(`${API_BASE_URL}/api/carts/${cartId}/items/${itemId}/`, {
-            method: "DELETE",
-          });
+          const response = await fetch(
+            `${API_BASE_URL}/api/carts/${cartId}/items/${itemId}/`,
+            {
+              method: "DELETE",
+            },
+          );
           if (!response.ok) {
             if (response.status === 404) {
               resetCartState();
@@ -258,7 +274,10 @@ export const useCartStore = create<CartState>()(
           await loadCart();
         } catch (err) {
           set({
-            error: err instanceof Error ? err.message : "Failed to remove product from cart.",
+            error:
+              err instanceof Error
+                ? err.message
+                : "Failed to remove product from cart.",
           });
           throw err;
         }

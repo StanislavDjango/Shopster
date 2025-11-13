@@ -6,41 +6,70 @@ from django.conf import settings
 from django.db import migrations, models
 
 
-
 class Migration(migrations.Migration):
 
     initial = True
 
     dependencies = [
-        ('taggit', '0006_rename_taggeditem_content_type_object_id_taggit_tagg_content_8fc721_idx'),
+        (
+            "taggit",
+            "0006_rename_taggeditem_content_type_object_id_taggit_tagg_content_8fc721_idx",
+        ),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Post',
+            name="Post",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', models.SlugField(blank=True, max_length=255, unique=True)),
-                ('title', models.CharField(max_length=255)),
-                ('summary', models.CharField(blank=True, max_length=500)),
-                ('body', models.TextField()),
-                ('meta_title', models.CharField(blank=True, max_length=255)),
-                ('meta_description', models.CharField(blank=True, max_length=500)),
-                ('meta_keywords', models.CharField(blank=True, max_length=255)),
-                ('author', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='posts', to=settings.AUTH_USER_MODEL)),
-                ('og_image', models.ImageField(blank=True, null=True, upload_to='blog/')),
-                ('is_published', models.BooleanField(default=False)),
-                ('published_at', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('tags', taggit.managers.TaggableManager(blank=True, through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("slug", models.SlugField(blank=True, max_length=255, unique=True)),
+                ("title", models.CharField(max_length=255)),
+                ("summary", models.CharField(blank=True, max_length=500)),
+                ("body", models.TextField()),
+                ("meta_title", models.CharField(blank=True, max_length=255)),
+                ("meta_description", models.CharField(blank=True, max_length=500)),
+                ("meta_keywords", models.CharField(blank=True, max_length=255)),
+                (
+                    "author",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="posts",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "og_image",
+                    models.ImageField(blank=True, null=True, upload_to="blog/"),
+                ),
+                ("is_published", models.BooleanField(default=False)),
+                ("published_at", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        blank=True,
+                        through="taggit.TaggedItem",
+                        to="taggit.Tag",
+                        verbose_name="Tags",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Post',
-                'verbose_name_plural': 'Posts',
-                'ordering': ('-published_at', '-created_at'),
+                "verbose_name": "Post",
+                "verbose_name_plural": "Posts",
+                "ordering": ("-published_at", "-created_at"),
             },
         ),
     ]
-

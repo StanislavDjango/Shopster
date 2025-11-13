@@ -61,7 +61,9 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                       : "Draft"}
                   </span>
                   {post.tags.length > 0 && (
-                    <span className="blog-card__tags">{post.tags.join(", ")}</span>
+                    <span className="blog-card__tags">
+                      {post.tags.join(", ")}
+                    </span>
                   )}
                 </div>
                 <h2>{post.title}</h2>
@@ -75,7 +77,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         </div>
         {postsResponse.nextPage && (
           <div className="blog-pagination">
-            <a className="btn btn-secondary" href={`/blog?page=${postsResponse.nextPage}`}>
+            <a
+              className="btn btn-secondary"
+              href={`/blog?page=${postsResponse.nextPage}`}
+            >
               Следующая страница
             </a>
           </div>

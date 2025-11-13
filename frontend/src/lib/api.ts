@@ -53,10 +53,14 @@ async function fetchPaginatedCollection<T>(
 
   const shouldBypassCache =
     params.query &&
-    Object.values(params.query).some((value) => value !== undefined && value !== "");
+    Object.values(params.query).some(
+      (value) => value !== undefined && value !== "",
+    );
   const response = await fetch(url.toString(), {
     headers: { Accept: "application/json" },
-    ...(shouldBypassCache ? { cache: "no-store" as const } : { next: { revalidate: 60 } }),
+    ...(shouldBypassCache
+      ? { cache: "no-store" as const }
+      : { next: { revalidate: 60 } }),
   });
 
   if (!response.ok) {
@@ -117,14 +121,21 @@ export async function fetchCategories(): Promise<CategorySummary[]> {
   });
 
   if (!response.ok) {
-    console.error("Failed to fetch categories", response.status, response.statusText);
+    console.error(
+      "Failed to fetch categories",
+      response.status,
+      response.statusText,
+    );
     return [];
   }
 
   const data = await response.json();
   const payload = Array.isArray(data.results) ? data.results : data;
   return payload
-    .filter((category: any) => category && category.slug && category.is_active !== false)
+    .filter(
+      (category: any) =>
+        category && category.slug && category.is_active !== false,
+    )
     .map((category: any) => ({
       id: category.id,
       name: category.name,

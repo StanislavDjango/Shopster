@@ -102,7 +102,11 @@ function SearchDropdown() {
               <div className="header-search__meta">
                 <span className="header-search__price">{price}</span>
                 <span className="header-search__title">{hit.name}</span>
-                {hit.category && <span className="header-search__category">{hit.category}</span>}
+                {hit.category && (
+                  <span className="header-search__category">
+                    {hit.category}
+                  </span>
+                )}
               </div>
             </Link>
           </li>

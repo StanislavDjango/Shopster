@@ -12,7 +12,8 @@ function buildImageUrl(imageUrl?: string | null): string | undefined {
     if (imageUrl.startsWith("http")) {
       return imageUrl;
     }
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+    const base =
+      process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
     return new URL(imageUrl, base).toString();
   } catch {
     return undefined;
@@ -96,11 +97,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             ← Назад к блогу
           </Link>
           <p className="blog-post__date">
-            {post.published_at ? new Date(post.published_at).toLocaleDateString("ru-RU") : "Draft"}
+            {post.published_at
+              ? new Date(post.published_at).toLocaleDateString("ru-RU")
+              : "Draft"}
           </p>
           <h1>{post.meta_title || post.title}</h1>
           {post.meta_keywords && (
-            <p className="blog-post__keywords">Ключевые слова: {post.meta_keywords}</p>
+            <p className="blog-post__keywords">
+              Ключевые слова: {post.meta_keywords}
+            </p>
           )}
           {post.tags.length > 0 && (
             <p className="blog-post__keywords">Теги: {post.tags.join(", ")}</p>
@@ -112,7 +117,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <img src={ogImage} alt={post.title} />
           </div>
         )}
-        <article className="blog-post__body" dangerouslySetInnerHTML={{ __html: post.body }} />
+        <article
+          className="blog-post__body"
+          dangerouslySetInnerHTML={{ __html: post.body }}
+        />
       </div>
     </section>
   );

@@ -15,7 +15,11 @@ export function AdminNavLink() {
   return (
     <>
       <Link href="/admin/stats">Admin dashboard</Link>
-      <a href={`${BACKEND_ORIGIN}/admin/`} target="_blank" rel="noreferrer noopener">
+      <a
+        href={`${BACKEND_ORIGIN}/admin/`}
+        target="_blank"
+        rel="noreferrer noopener"
+      >
         Django admin
       </a>
     </>

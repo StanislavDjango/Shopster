@@ -12,7 +12,8 @@ type Props = {
 };
 
 export function ProductCard({ product }: Props) {
-  const mainImage = product.images.find((img) => img.is_main) ?? product.images[0];
+  const mainImage =
+    product.images.find((img) => img.is_main) ?? product.images[0];
 
   return (
     <div className="product-card">

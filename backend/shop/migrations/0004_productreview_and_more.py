@@ -8,41 +8,90 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('shop', '0003_meta_for_seo'),
+        ("shop", "0003_meta_for_seo"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProductReview',
+            name="ProductReview",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deleted_at', models.DateTimeField(blank=True, null=True)),
-                ('rating', models.PositiveSmallIntegerField()),
-                ('title', models.CharField(blank=True, max_length=255)),
-                ('body', models.TextField()),
-                ('verified_purchase', models.BooleanField(default=False)),
-                ('moderation_status', models.CharField(choices=[('pending', 'На модерации'), ('approved', 'Одобрено'), ('rejected', 'Отклонено')], default='pending', max_length=20)),
-                ('moderation_note', models.TextField(blank=True)),
-                ('moderated_at', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('moderated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='moderated_product_reviews', to=settings.AUTH_USER_MODEL)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='shop.product')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_reviews', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("deleted_at", models.DateTimeField(blank=True, null=True)),
+                ("rating", models.PositiveSmallIntegerField()),
+                ("title", models.CharField(blank=True, max_length=255)),
+                ("body", models.TextField()),
+                ("verified_purchase", models.BooleanField(default=False)),
+                (
+                    "moderation_status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "На модерации"),
+                            ("approved", "Одобрено"),
+                            ("rejected", "Отклонено"),
+                        ],
+                        default="pending",
+                        max_length=20,
+                    ),
+                ),
+                ("moderation_note", models.TextField(blank=True)),
+                ("moderated_at", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "moderated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="moderated_product_reviews",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reviews",
+                        to="shop.product",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_reviews",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Отзыв о товаре',
-                'verbose_name_plural': 'Отзывы о товарах',
-                'ordering': ('-created_at',),
+                "verbose_name": "Отзыв о товаре",
+                "verbose_name_plural": "Отзывы о товарах",
+                "ordering": ("-created_at",),
             },
         ),
         migrations.AddConstraint(
-            model_name='productreview',
-            constraint=models.UniqueConstraint(condition=models.Q(('deleted_at__isnull', True)), fields=('product', 'user'), name='unique_active_product_review'),
+            model_name="productreview",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("deleted_at__isnull", True)),
+                fields=("product", "user"),
+                name="unique_active_product_review",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='productreview',
-            constraint=models.CheckConstraint(check=models.Q(('rating__gte', 1), ('rating__lte', 5)), name='product_review_rating_range'),
+            model_name="productreview",
+            constraint=models.CheckConstraint(
+                check=models.Q(("rating__gte", 1), ("rating__lte", 5)),
+                name="product_review_rating_range",
+            ),
         ),
     ]
