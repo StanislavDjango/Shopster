@@ -21,8 +21,7 @@ function getApiBaseUrl(): string {
     return envBase.replace(/\/$/, "");
   }
   if (typeof window !== "undefined") {
-    const { protocol, hostname } = window.location;
-    return `${protocol}//${hostname}:8000`;
+    return window.location.origin.replace(/\/$/, "");
   }
   return "http://localhost:8000";
 }
