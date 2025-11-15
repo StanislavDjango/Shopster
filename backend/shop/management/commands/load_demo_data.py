@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+from contextlib import nullcontext
 from dataclasses import dataclass
 from decimal import Decimal
 from io import BytesIO
@@ -9,6 +10,7 @@ from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
+from django.test.utils import override_settings
 from PIL import Image, ImageDraw, ImageFont
 
 from ...models import Cart, CartItem, Category, Order, OrderItem, Product, ProductImage
@@ -205,9 +207,23 @@ class Command(BaseCommand):
             default=len(PRODUCTS),
             help="Сколько товаров сгенерировать (по умолчанию базовый набор).",
         )
+        parser.add_argument(
+            "--skip-algolia",
+            action="store_true",
+            help="Не пытаться синхронизировать товары с Algolia во время генерации.",
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
+        algolia_context = (
+            override_settings(ALGOLIA_ENABLED=False)
+            if options["skip_algolia"]
+            else nullcontext()
+        )
+        with algolia_context:
+            self._handle_with_options(options)
+
+    def _handle_with_options(self, options):
         if options["reset"]:
             self.stdout.write(
                 self.style.WARNING("Очищаю существующие данные магазина...")

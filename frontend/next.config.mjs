@@ -18,11 +18,8 @@ try {
   // keep defaults
 }
 
-const imageDomains = Array.from(new Set(["localhost", "127.0.0.1", "172.25.96.1", backendHost]));
-
 const nextConfig = {
   images: {
-    domains: imageDomains,
     remotePatterns: [
       {
         protocol: "http",
