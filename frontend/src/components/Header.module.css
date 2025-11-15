@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+.header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0.75rem 2rem;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.logoSection {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.logo:hover {
+  transform: translateY(-2px);
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  color: #0070f3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.logoText {
+  color: #1a1a1a;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #0070f3 0%, #00d4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+}
+
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav li {
+  position: relative;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #555;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.nav a:hover {
+  color: #0070f3;
+  background-color: rgba(0, 112, 243, 0.08);
+}
+
+.actionsWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.mobileMenuButton span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: #333;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mobileMenuButton span:nth-child(1) {
+  top: 8px;
+}
+
+.mobileMenuButton span:nth-child(2) {
+  top: 50%;
+  opacity: 1;
+}
+
+.mobileMenuButton span:nth-child(3) {
+  top: auto;
+  bottom: 8px;
+}
+
+.mobileMenuButton.active span:nth-child(1) {
+  transform: rotate(45deg);
+  top: 50%;
+}
+
+.mobileMenuButton.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobileMenuButton.active span:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 50%;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+
+  .scrolled {
+    padding: 0.65rem 1rem;
+  }
+
+  .container {
+    gap: 1rem;
+  }
+
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .nav.navOpen {
+    max-height: 300px;
+  }
+
+  .nav ul {
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem 0;
+    gap: 0;
+  }
+
+  .nav li {
+    width: 100%;
+  }
+
+  .nav a {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    text-align: left;
+  }
+
+  .nav a:hover {
+    background-color: #f0f6ff;
+  }
+
+  .mobileMenuButton {
+    display: block;
+  }
+
+  .actions {
+    gap: 1rem;
+  }
+
+  .logoText {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    gap: 0.5rem;
+  }
+
+  .logoIcon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logoText {
+    font-size: 1.1rem;
+  }
+
+  .header {
+    padding: 0.65rem 0.75rem;
+  }
+}

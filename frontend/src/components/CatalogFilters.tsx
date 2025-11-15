@@ -1,9 +1,10 @@
 ﻿"use client";
 
-import { FormEvent, useCallback, useMemo } from "react";
+import { FormEvent, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { CategorySummary } from "@/types/product";
+import styles from "./CatalogFilters.module.css";
 
 const ORDER_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "", label: "Featured" },
@@ -41,10 +42,12 @@ function buildQueryString(values: CatalogFilterValues) {
 
 export function CatalogFilters({ categories, initialValues }: CatalogFiltersProps) {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const sortedCategories = useMemo(
     () => [...categories].sort((a, b) => a.name.localeCompare(b.name)),
     [categories],
   );
+  
   const handleSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -68,70 +71,127 @@ export function CatalogFilters({ categories, initialValues }: CatalogFiltersProp
   const handleReset = useCallback(() => {
     router.push("/products");
   }, [router]);
+
   return (
-    <form className="catalog-filters" onSubmit={handleSubmit}>
-      <label className="catalog-filters__search">
-        <span>Search</span>
-        <input
-          type="search"
-          name="search"
-          placeholder="Search products"
-          defaultValue={initialValues.search ?? ""}
-        />
-      </label>
-      <label>
-        <span>Category</span>
-        <select name="category" defaultValue={initialValues.category ?? ""}>
-          <option value="">All categories</option>
-          {sortedCategories.map((category) => (
-            <option key={category.id} value={category.slug}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        <span>Price from</span>
-        <input
-          type="number"
-          name="min_price"
-          min={0}
-          step="0.01"
-          defaultValue={initialValues.min_price ?? ""}
-        />
-      </label>
-      <label>
-        <span>Price to</span>
-        <input
-          type="number"
-          name="max_price"
-          min={0}
-          step="0.01"
-          defaultValue={initialValues.max_price ?? ""}
-        />
-      </label>
-      <label className="catalog-filters__checkbox">
-        <input type="checkbox" name="in_stock" defaultChecked={initialValues.in_stock === "true"} />
-        <span>In stock</span>
-      </label>
-      <label>
-        <span>Sort by</span>
-        <select name="ordering" defaultValue={initialValues.ordering ?? ""}>
-          {ORDER_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div className="catalog-filters__actions">
-        <button type="submit" className="btn btn-primary">
-          Apply
-        </button>
-        <button type="button" className="btn btn-secondary" onClick={handleReset}>
-          Reset
-        </button>
-      </div>
-    </form>
+    <>
+      <button className={styles.mobileFilterToggle} onClick={() => setIsOpen(!isOpen)}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <line x1="4" y1="18" x2="20" y2="18" />
+        </svg>
+        <span>Filters</span>
+      </button>
+      <form className={`${styles.catalogFilters} ${isOpen ? styles.open : ""}`} onSubmit={handleSubmit}>
+        <div className={styles.filterHeader}>
+          <h3 className={styles.filterTitle}>Filters</h3>
+          <button 
+            type="button"
+            className={styles.closeButton}
+            onClick={() => setIsOpen(false)}
+            aria-label="Close filters"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className={styles.filterSection}>
+          <label className={styles.searchLabel}>
+            <span className={styles.labelText}>Search</span>
+            <div className={styles.searchWrapper}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <input
+                type="search"
+                name="search"
+                placeholder="Search products"
+                defaultValue={initialValues.search ?? ""}
+                className={styles.input}
+              />
+            </div>
+          </label>
+        </div>
+
+        <div className={styles.filterSection}>
+          <label className={styles.filterLabel}>
+            <span className={styles.labelText}>Category</span>
+            <select name="category" defaultValue={initialValues.category ?? ""} className={styles.select}>
+              <option value="">All categories</option>
+              {sortedCategories.map((category) => (
+                <option key={category.id} value={category.slug}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div className={styles.filterSection}>
+          <label className={styles.filterLabel}>
+            <span className={styles.labelText}>Sort by</span>
+            <select name="ordering" defaultValue={initialValues.ordering ?? ""} className={styles.select}>
+              {ORDER_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div className={styles.filterSection}>
+          <h4 className={styles.filterSubtitle}>Price Range</h4>
+          <div className={styles.priceInputs}>
+            <label className={styles.priceLabel}>
+              <span className={styles.priceText}>From</span>
+              <input
+                type="number"
+                name="min_price"
+                min={0}
+                step="0.01"
+                placeholder="0"
+                defaultValue={initialValues.min_price ?? ""}
+                className={styles.priceInput}
+              />
+            </label>
+            <label className={styles.priceLabel}>
+              <span className={styles.priceText}>To</span>
+              <input
+                type="number"
+                name="max_price"
+                min={0}
+                step="0.01"
+                placeholder="0"
+                defaultValue={initialValues.max_price ?? ""}
+                className={styles.priceInput}
+              />
+            </label>
+          </div>
+        </div>
+
+        <div className={styles.filterSection}>
+          <label className={styles.checkboxLabel}>
+            <input 
+              type="checkbox" 
+              name="in_stock" 
+              defaultChecked={initialValues.in_stock === "true"}
+              className={styles.checkbox}
+            />
+            <span className={styles.checkboxText}>In stock only</span>
+          </label>
+        </div>
+
+        <div className={styles.filterActions}>
+          <button type="submit" className={styles.applyButton}>
+            Apply Filters
+          </button>
+          <button type="button" className={styles.resetButton} onClick={handleReset}>
+            Clear All
+          </button>
+        </div>
+      </form>
+    </>
   );
 }

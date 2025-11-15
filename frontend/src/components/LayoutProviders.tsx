@@ -1,34 +1,12 @@
 ﻿"use client";
 
-import { PropsWithChildren } from "react";
-import Link from "next/link";
-
-import { AccountMenu } from "@/components/AccountMenu";
-import { AlgoliaSearch } from "@/components/AlgoliaSearch";
-import { CartBadge } from "@/components/CartBadge";
-import { AdminNavLink } from "@/components/AdminNavLink";
 import { AuthSessionProvider } from "@/components/SessionProvider";
+import { Header } from "@/components/Header";
 
 export function LayoutProviders({ children }: PropsWithChildren) {
   return (
     <AuthSessionProvider>
-      <header className="top-nav">
-        <div className="container nav-wrapper">
-          <Link href="/" className="logo">
-            Shopster
-          </Link>
-          <div className="nav-right">
-            <AlgoliaSearch />
-            <nav className="nav-links">
-              <Link href="/#features">Features</Link>
-              <Link href="/products">Catalog</Link>
-              <AdminNavLink />
-            </nav>
-            <CartBadge />
-            <AccountMenu />
-          </div>
-        </div>
-      </header>
+      <Header />
       <main>{children}</main>
       <footer className="footer">
         <div className="container footer-wrapper">

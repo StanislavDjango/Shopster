@@ -3,6 +3,7 @@
 import { CatalogFilters } from "@/components/CatalogFilters";
 import { ProductsInfiniteList } from "@/components/ProductsInfiniteList";
 import { fetchCategories, fetchProductsPage } from "@/lib/api";
+import styles from "./products.module.css";
 
 const PAGE_SIZE = 12;
 
@@ -84,29 +85,35 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   };
 
   return (
-    <section className="section">
-      <div className="container">
-        <div className="catalog-controls">
-          <div className="section-header">
-            <h1>Catalog</h1>
-            {searchTerm ? (
-              <p>
-                Showing results for <strong>{searchTerm}</strong>. Adjust filters to refine the
-                list.
-              </p>
-            ) : (
-              <p>Products are synced from Django. Use search and filters to navigate quickly.</p>
-            )}
-          </div>
-          <CatalogFilters categories={categories} initialValues={filterValues} />
+    <section className={styles.section}>
+      <div className={styles.container}>
+        <div className={styles.pageHeader}>
+          <h1>Catalog</h1>
+          {searchTerm ? (
+            <p>
+              Showing results for <strong>{searchTerm}</strong>. Adjust filters to refine the
+              list.
+            </p>
+          ) : (
+            <p>Products are synced from Django. Use search and filters to navigate quickly.</p>
+          )}
         </div>
-        <ProductsInfiniteList
-          initialItems={initialPage.items}
-          initialNextPage={initialPage.nextPage}
-          pageSize={PAGE_SIZE}
-          totalCount={initialPage.totalCount}
-          query={queryParams}
-        />
+        
+        <div className={styles.catalogLayout}>
+          <aside className={styles.sidebar}>
+            <CatalogFilters categories={categories} initialValues={filterValues} />
+          </aside>
+          
+          <main className={styles.content}>
+            <ProductsInfiniteList
+              initialItems={initialPage.items}
+              initialNextPage={initialPage.nextPage}
+              pageSize={PAGE_SIZE}
+              totalCount={initialPage.totalCount}
+              query={queryParams}
+            />
+          </main>
+        </div>
       </div>
     </section>
   );
