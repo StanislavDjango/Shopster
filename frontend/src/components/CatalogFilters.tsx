@@ -10,6 +10,8 @@ const ORDER_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "", label: "Featured" },
   { value: "price", label: "Price: Low to high" },
   { value: "-price", label: "Price: High to low" },
+  { value: "-reviews_count", label: "Popularity" },
+  { value: "-average_rating", label: "Rating" },
   { value: "-created_at", label: "Newest" },
   { value: "name", label: "Name A-Z" },
   { value: "-name", label: "Name Z-A" },
@@ -18,6 +20,7 @@ const ORDER_OPTIONS: Array<{ value: string; label: string }> = [
 export type CatalogFilterValues = {
   search?: string;
   category?: string;
+  brand?: string;
   min_price?: string;
   max_price?: string;
   in_stock?: string;
@@ -26,6 +29,7 @@ export type CatalogFilterValues = {
 
 type CatalogFiltersProps = {
   categories: CategorySummary[];
+  brands: Array<{ name: string; count: number }>;
   initialValues: CatalogFilterValues;
 };
 
@@ -33,6 +37,7 @@ function buildQueryString(values: CatalogFilterValues) {
   const params = new URLSearchParams();
   if (values.search) params.set("search", values.search);
   if (values.category) params.set("category", values.category);
+  if (values.brand) params.set("brand", values.brand);
   if (values.min_price) params.set("min_price", values.min_price);
   if (values.max_price) params.set("max_price", values.max_price);
   if (values.in_stock === "true") params.set("in_stock", "true");
@@ -40,7 +45,7 @@ function buildQueryString(values: CatalogFilterValues) {
   return params.toString();
 }
 
-export function CatalogFilters({ categories, initialValues }: CatalogFiltersProps) {
+export function CatalogFilters({ categories, brands, initialValues }: CatalogFiltersProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const sortedCategories = useMemo(
@@ -56,6 +61,7 @@ export function CatalogFilters({ categories, initialValues }: CatalogFiltersProp
       const nextValues: CatalogFilterValues = {
         search: rawSearch.trim() || undefined,
         category: (formData.get("category") as string) || undefined,
+        brand: (formData.get("brand") as string) || undefined,
         min_price: (formData.get("min_price") as string) || undefined,
         max_price: (formData.get("max_price") as string) || undefined,
         in_stock: formData.get("in_stock") ? "true" : undefined,
@@ -127,6 +133,22 @@ export function CatalogFilters({ categories, initialValues }: CatalogFiltersProp
             </select>
           </label>
         </div>
+
+        {brands.length > 0 && (
+          <div className={styles.filterSection}>
+            <label className={styles.filterLabel}>
+              <span className={styles.labelText}>Brand</span>
+              <select name="brand" defaultValue={initialValues.brand ?? ""} className={styles.select}>
+                <option value="">All brands</option>
+                {brands.map((brand) => (
+                  <option key={brand.name} value={brand.name}>
+                    {brand.name} ({brand.count})
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        )}
 
         <div className={styles.filterSection}>
           <label className={styles.filterLabel}>

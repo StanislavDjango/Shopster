@@ -8,6 +8,7 @@ import { fetchProduct } from "@/lib/api";
 import { absoluteUrl, DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/seo";
 import { formatCurrency } from "@/lib/utils";
 import { ProductReviews } from "@/components/ProductReviews";
+import styles from "./product-detail.module.css";
 
 function buildImageUrl(imageUrl: string | undefined): string | undefined {
   if (!imageUrl) {
@@ -87,51 +88,88 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const mainImage = product.images.find((img) => img.is_main) ?? product.images[0];
   const imageUrl = buildImageUrl(mainImage?.image);
   const description = product.description || product.short_description || "";
+  const isInStock = product.stock > 0;
 
   return (
     <>
-      <section className="section">
-        <div className="container hero-grid">
-          <div className="hero-card">
-            <Link
-              href="/products"
-              className="btn btn-outline"
-              style={{ marginBottom: "1.5rem", width: "fit-content" }}
-            >
-              Back to catalog
-            </Link>
-            <h1>{product.meta_title || product.name}</h1>
-            <p className="lead">{description}</p>
-            <div className="cta-buttons">
-              <span className="btn price-badge">
-                {formatCurrency(product.currency ?? "RUB", Number(product.price))}
-              </span>
-              <AddToCartButton productId={product.id} />
-              <span className="btn btn-outline">In stock: {product.stock}</span>
+      <section className={styles.productDetailSection}>
+        <div className={styles.productContainer}>
+          <div className={styles.productGrid}>
+            {/* Product Info */}
+            <div className={styles.productInfo}>
+              <Link href="/products" className={styles.backButton}>
+                ← Back to catalog
+              </Link>
+
+              <h1 className={styles.productTitle}>{product.meta_title || product.name}</h1>
+
+              <p className={styles.productDescription}>{description}</p>
+
+              {/* Price Section */}
+              <div className={styles.priceSection}>
+                <span className={styles.price}>
+                  {formatCurrency(product.currency ?? "RUB", Number(product.price))}
+                </span>
+                <span className={`${styles.stock} ${!isInStock ? styles.outOfStock : ""}`}>
+                  {isInStock ? `✓ In stock: ${product.stock}` : "Out of stock"}
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className={styles.productActions}>
+                <AddToCartButton productId={product.id} />
+              </div>
+
+              {/* Product Meta Information */}
+              <div className={styles.productMeta}>
+                <div className={styles.metaItem}>
+                  <span className={styles.metaLabel}>SKU</span>
+                  <span className={styles.metaValue}>{product.sku}</span>
+                </div>
+                {product.category && (
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Category</span>
+                    <span className={styles.metaValue}>{product.category.name}</span>
+                  </div>
+                )}
+                {product.average_rating && (
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Rating</span>
+                    <span className={styles.metaValue}>
+                      ⭐ {product.average_rating.toFixed(1)} ({product.reviews_count} reviews)
+                    </span>
+                  </div>
+                )}
+                {product.meta_keywords && (
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Keywords</span>
+                    <span className={styles.metaValue}>{product.meta_keywords}</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <p>SKU: {product.sku}</p>
-            {product.category && <p>Category: {product.category.name}</p>}
-            {product.meta_keywords && (
-              <p className="product-keywords">Keywords: {product.meta_keywords}</p>
-            )}
-          </div>
-          <div className="hero-card" style={{ padding: 0, overflow: "hidden" }}>
-            {imageUrl ? (
-              <Image
-                src={imageUrl}
-                alt={mainImage?.alt_text || product.name}
-                width={960}
-                height={640}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
-              <div className="product-image" />
-            )}
+
+            {/* Product Image */}
+            <div className={styles.productImageContainer}>
+              {imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt={mainImage?.alt_text || product.name}
+                  width={960}
+                  height={640}
+                  className={styles.productImage}
+                />
+              ) : (
+                <div className={styles.productImagePlaceholder}>No image available</div>
+              )}
+            </div>
           </div>
         </div>
       </section>
-      <section className="section">
-        <div className="container">
+
+      {/* Reviews Section */}
+      <section className={styles.reviewsSection}>
+        <div className={styles.productContainer}>
           <ProductReviews
             productId={product.id}
             productSlug={product.slug}

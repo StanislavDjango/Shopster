@@ -27,6 +27,7 @@ export type ProductReview = {
 
 export type Product = {
   id: number;
+  brand: string;
   name: string;
   slug: string;
   sku: string;

@@ -128,12 +128,43 @@ export function ProductsInfiniteList({
     return () => observer.disconnect();
   }, [error, hasMore, loadMore]);
 
+  const renderSkeletons = () => {
+    if (!isLoading) return null;
+    return Array.from({ length: 3 }).map((_, index) => (
+      <div className="product-skeleton" key={`skeleton-${index}`}>
+        <div className="product-skeleton__image" />
+        <div className="product-skeleton__body">
+          <div className="skeleton-pill" />
+          <div className="skeleton-line" />
+          <div className="skeleton-line" />
+          <div className="skeleton-line" style={{ width: "60%" }} />
+        </div>
+      </div>
+    ));
+  };
+
+  if (!items.length && !isLoading) {
+    return (
+      <div className="catalog-empty">
+        <p>No products match these filters yet.</p>
+        <button
+          className="btn btn-secondary"
+          type="button"
+          onClick={() => window.location.assign("/products")}
+        >
+          Reset filters
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="product-grid">
         {items.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
+        {renderSkeletons()}
       </div>
 
       <div className="catalog-footer" ref={sentinelRef} />

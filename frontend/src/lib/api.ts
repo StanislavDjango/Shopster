@@ -8,6 +8,14 @@ const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
   "http://localhost:8000";
 
+export type ProductFacets = {
+  brands: Array<{ name: string; count: number }>;
+  price?: {
+    min: number | null;
+    max: number | null;
+  };
+};
+
 type PaginationParams = {
   page?: number;
   pageSize?: number;
@@ -105,6 +113,35 @@ export async function fetchProduct(slug: string): Promise<Product | null> {
 
   const data = await response.json();
   return data as Product;
+}
+
+export async function fetchProductFacets(
+  query: Record<string, string | undefined> = {},
+): Promise<ProductFacets> {
+  try {
+    const url = new URL("/api/products/facets/", API_BASE);
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        url.searchParams.set(key, value);
+      }
+    }
+    const response = await fetch(url.toString(), {
+      headers: { Accept: "application/json" },
+      next: { revalidate: 120 },
+    });
+    if (!response.ok) {
+      console.warn("Facets endpoint unavailable", response.status, response.statusText);
+      return { brands: [] };
+    }
+    const data = await response.json();
+    return {
+      brands: Array.isArray(data.brands) ? data.brands.filter((b) => b?.name) : [],
+      price: data.price,
+    };
+  } catch (error) {
+    console.warn("Failed to fetch product facets", error);
+    return { brands: [] };
+  }
 }
 
 export async function fetchCategories(): Promise<CategorySummary[]> {

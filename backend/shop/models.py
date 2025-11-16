@@ -98,6 +98,7 @@ class Product(SoftDeleteModel):
         related_name="products",
         on_delete=models.PROTECT,
     )
+    brand = models.CharField(max_length=255, blank=True, default="", db_index=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True, allow_unicode=True)
     sku = models.CharField(max_length=64, unique=True)

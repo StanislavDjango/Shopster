@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Avg, Count, Q, Sum
+from django.db.models import Avg, Count, Max, Min, Q
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -48,7 +48,13 @@ class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     lookup_field = "slug"
     filterset_class = ProductFilter
-    ordering_fields = ("price", "created_at", "name")
+    ordering_fields = (
+        "price",
+        "created_at",
+        "name",
+        "reviews_count",
+        "average_rating",
+    )
     ordering = ("name",)
 
     def get_queryset(self):
@@ -72,6 +78,31 @@ class ProductViewSet(viewsets.ModelViewSet):
                     ),
                 ),
             )
+        )
+
+    @action(detail=False, permission_classes=[AllowAny])
+    def facets(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        brand_rows = (
+            queryset.exclude(brand__isnull=True)
+            .exclude(brand__exact="")
+            .values("brand")
+            .annotate(count=Count("id"))
+            .order_by("-count", "brand")
+        )
+        price_bounds = queryset.aggregate(min_price=Min("price"), max_price=Max("price"))
+        return Response(
+            {
+                "brands": [
+                    {"name": row["brand"], "count": row["count"]}
+                    for row in brand_rows
+                    if row["brand"]
+                ],
+                "price": {
+                    "min": price_bounds.get("min_price"),
+                    "max": price_bounds.get("max_price"),
+                },
+            }
         )
 
 

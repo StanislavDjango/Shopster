@@ -148,6 +148,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "id",
             "category",
             "category_id",
+            "brand",
             "name",
             "slug",
             "sku",
@@ -171,6 +172,7 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "slug",
+            "brand",
             "average_rating",
             "reviews_count",
             "can_review",

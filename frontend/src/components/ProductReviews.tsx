@@ -11,6 +11,7 @@ import {
   fetchProductReviews,
   updateProductReview,
 } from "@/lib/reviewApi";
+import styles from "./ProductReviews.module.css";
 
 type ProductReviewsProps = {
   productId: number;
@@ -35,7 +36,6 @@ const initialFormState: ReviewFormState = {
   authorName: "",
 };
 
-// ?????? ????????? ???????? (1..5)
 function StarRating({
   value,
   onChange,
@@ -70,7 +70,7 @@ function StarRating({
 
   return (
     <div
-      className="rating-stars"
+      className={styles.ratingStars}
       role="slider"
       aria-valuemin={1}
       aria-valuemax={5}
@@ -83,17 +83,17 @@ function StarRating({
         <button
           key={n}
           type="button"
-          className={`rating-star ${current >= n ? "is-filled" : ""}`}
-          aria-label={`${n} ?? 5`}
+          className={`${styles.ratingStarButton} ${current >= n ? styles.isFilled : ""}`}
+          aria-label={`${n} of 5`}
           disabled={disabled}
           onMouseEnter={() => setHover(n)}
           onFocus={() => setHover(n)}
           onClick={() => onChange(n)}
         >
-          ?
+          ★
         </button>
       ))}
-      <span className="rating-value">{current} / 5</span>
+      <span className={styles.ratingValue}>{current} / 5</span>
     </div>
   );
 }
@@ -111,16 +111,12 @@ function formatDate(value: string): string {
 }
 
 function moderationLabel(status: ProductReview["moderation_status"]): string {
-  switch (status) {
-    case "approved":
-      return "Одобрен";
-    case "pending":
-      return "На модерации";
-    case "rejected":
-      return "Отклонён";
-    default:
-      return status;
-  }
+  const labels: Record<string, string> = {
+    approved: "Approved",
+    pending: "Pending",
+    rejected: "Rejected",
+  };
+  return labels[status] ?? status;
 }
 
 export function ProductReviews({
@@ -157,35 +153,26 @@ export function ProductReviews({
     setIsAuthenticated(sessionStatus === "authenticated");
   }, [sessionStatus]);
 
-  const hasMore = nextPage !== null;
+  const canSubmitReview = useMemo(
+    () => canReview || Boolean(userReview),
+    [canReview, userReview],
+  );
 
   const loadReviews = useCallback(
-    async (page: number) => {
+    async (page = 1) => {
       setLoading(true);
       setError(null);
       try {
-        const {
-          reviews: fetched,
-          nextPage: next,
-          totalCount: count,
-        } = await fetchProductReviews(productSlug, page);
-        setReviews((prev) => {
-          if (page === 1) {
-            return fetched;
-          }
-          const existingIds = new Set(prev.map((review) => review.id));
-          const merged = [...prev];
-          fetched.forEach((review) => {
-            if (!existingIds.has(review.id)) {
-              merged.push(review);
-            }
-          });
-          return merged;
+        const { items, nextPage: newNextPage, totalCount: newTotal } = await fetchProductReviews({
+          productSlug,
+          page,
         });
-        setNextPage(next);
-        setTotalCount(count);
+        const safeItems = Array.isArray(items) ? items : [];
+        setReviews((prev) => (page === 1 ? safeItems : [...prev, ...safeItems]));
+        setNextPage(typeof newNextPage === "number" ? newNextPage : null);
+        setTotalCount(typeof newTotal === "number" ? newTotal : safeItems.length);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Не удалось загрузить отзывы.");
+        setError(err instanceof Error ? err.message : "Failed to load reviews.");
       } finally {
         setLoading(false);
       }
@@ -194,15 +181,13 @@ export function ProductReviews({
   );
 
   useEffect(() => {
-    loadReviews(1).catch(() => undefined);
+    loadReviews().catch(() => undefined);
   }, [loadReviews]);
 
-  const canSubmitReview = useMemo(() => canReview, [canReview]);
-
   const resetForm = () => {
-    setFormVisible(false);
-    setEditingReview(null);
     setForm({ ...initialFormState });
+    setEditingReview(null);
+    setFormVisible(false);
   };
 
   const handleCreateOrUpdate = async () => {
@@ -212,16 +197,17 @@ export function ProductReviews({
       const accessToken = (session as any)?.accessToken as string | undefined;
       if (editingReview) {
         const updated = await updateProductReview(
-          editingReview.id,
           {
+            id: editingReview.id,
             rating: form.rating,
             title: form.title,
             body: form.body,
           },
           accessToken,
         );
-        setReviews((prev) => prev.map((review) => (review.id === updated.id ? updated : review)));
-        resetForm();
+        setReviews((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+        setEditingReview(null);
+        setFormVisible(false);
       } else {
         const payload: Parameters<typeof createProductReview>[0] = {
           product_id: productId,
@@ -244,7 +230,9 @@ export function ProductReviews({
         setForm({ ...initialFormState });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Не удалось сохранить отзыв.");
+      setError(
+        err instanceof Error ? err.message : "Could not submit your review. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -262,7 +250,7 @@ export function ProductReviews({
   };
 
   const handleDelete = async (reviewId: number) => {
-    if (!confirm("Удалить отзыв?")) {
+    if (!confirm("Delete this review?")) {
       return;
     }
     setSubmitting(true);
@@ -274,7 +262,7 @@ export function ProductReviews({
       setFormVisible(false);
       setEditingReview(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Не удалось удалить отзыв.");
+      setError(err instanceof Error ? err.message : "Could not delete the review.");
     } finally {
       setSubmitting(false);
     }
@@ -290,45 +278,49 @@ export function ProductReviews({
   const approvedCount = reviewsCount;
 
   return (
-    <section className="product-reviews">
-      <header className="product-reviews__header">
-        <h2>Отзывы</h2>
-        <p className="product-reviews__summary">
-          {approvedCount > 0
-            ? `Средняя оценка ${derivedAverage?.toFixed(1) ?? "—"} ★ · Одобренных отзывов: ${approvedCount}`
-            : "Пока нет одобренных отзывов"}
-        </p>
+    <section className={styles.reviewsContainer}>
+      <header className={styles.reviewsHeader}>
+        <div>
+          <h2 className={styles.reviewsTitle}>Reviews</h2>
+          <p className={styles.reviewsSummary}>
+            {approvedCount > 0
+              ? `Average rating ${derivedAverage?.toFixed(1) ?? "-"} / 5 (approved reviews: ${
+                  approvedCount
+                })`
+              : "No approved reviews yet"}
+          </p>
+        </div>
+        {approvedCount > 0 && (
+          <span className={styles.metaPill}>
+            {derivedAverage?.toFixed(1) ?? "-"} в… В· {approvedCount} reviews
+          </span>
+        )}
       </header>
 
-      {error && <p className="product-reviews__error">{error}</p>}
+      {error && <p className={styles.error}>{error}</p>}
 
       {canSubmitReview && !formVisible && (
-        <button className="btn btn-primary" onClick={() => setFormVisible(true)}>
-          Написать отзыв
+        <button className={styles.reviewWriteButton} onClick={() => setFormVisible(true)}>
+          Write a review
         </button>
       )}
 
       {!isAuthenticated && (
-        <p className="product-reviews__hint">
-          {
-            "\u0412\u044b \u043c\u043e\u0436\u0435\u0442\u0435 \u043e\u0441\u0442\u0430\u0432\u0438\u0442\u044c \u043e\u0442\u0437\u044b\u0432 \u0431\u0435\u0437 \u0430\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u0438."
-          }{" "}
-          <Link href="/api/auth/signin" className="link">
-            {"\u0412\u043e\u0439\u0434\u0438\u0442\u0435"}
+        <p className={styles.hint}>
+          You can leave a review without signing in.{" "}
+          <Link href="/api/auth/signin" className={styles.authLink}>
+            Sign in
           </Link>{" "}
-          {
-            "\u0435\u0441\u043b\u0438 \u0445\u043e\u0442\u0438\u0442\u0435 \u043f\u0440\u0438\u0432\u044f\u0437\u0430\u0442\u044c \u043e\u0442\u0437\u044b\u0432 \u043a \u0441\u0432\u043e\u0435\u043c\u0443 \u0430\u043a\u043a\u0430\u0443\u043d\u0442\u0443."
-          }
+          to link it to your account.
         </p>
       )}
 
       {formVisible && (
-        <div className="product-reviews__form">
-          <h3>{editingReview ? "Изменить отзыв" : "Новый отзыв"}</h3>
-          <div className="form-grid">
-            <label>
-              <span>Оценка</span>
-
+        <div className={styles.reviewForm}>
+          <h3 className={styles.reviewFormTitle}>{editingReview ? "Edit review" : "New review"}</h3>
+          <div className={styles.formGrid}>
+            <label className={styles.formLabel}>
+              <span className={styles.formLabelText}>Rating</span>
               <StarRating
                 value={form.rating}
                 disabled={submitting}
@@ -336,50 +328,52 @@ export function ProductReviews({
               />
             </label>
             {!isAuthenticated && (
-              <label>
-                <span>{"\u0412\u0430\u0448\u0435 \u0438\u043c\u044f"}</span>
+              <label className={styles.formLabel}>
+                <span className={styles.formLabelText}>Your name</span>
                 <input
                   type="text"
+                  className={styles.formInput}
                   value={form.authorName}
                   onChange={(event) =>
                     setForm((prev) => ({ ...prev, authorName: event.target.value }))
                   }
-                  placeholder="\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u044c\u0442\u0435\u0441\u044c, \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u0438\u043c\u044f \u0440\u044f\u0434\u043e\u043c \u0441 \u043e\u0442\u0437\u044b\u0432\u043e\u043c"
+                  placeholder="Introduce yourself so we know how to address you"
                   disabled={submitting}
                   maxLength={120}
                 />
               </label>
             )}
 
-            <label>
-              <span>Заголовок</span>
+            <label className={styles.formLabel}>
+              <span className={styles.formLabelText}>Headline</span>
               <input
                 type="text"
+                className={styles.formInput}
                 value={form.title}
                 onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
-                placeholder="Коротко о впечатлении"
+                placeholder="Brief headline"
                 disabled={submitting}
                 maxLength={120}
               />
             </label>
-            <label className="form-grid__full">
-              <span>Отзыв</span>
+            <label className={`${styles.formLabel} ${styles.formGridFull}`}>
+              <span className={styles.formLabelText}>Review</span>
               <textarea
+                className={styles.formTextarea}
                 value={form.body}
                 onChange={(event) => setForm((prev) => ({ ...prev, body: event.target.value }))}
-                rows={4}
-                placeholder="Поделитесь опытом покупки и использования"
+                placeholder="Share your experience with the product"
                 disabled={submitting}
               />
             </label>
           </div>
-          <div className="product-reviews__form-actions">
+          <div className={styles.formActions}>
             <button
               className="btn btn-primary"
               onClick={handleCreateOrUpdate}
               disabled={submitting || !form.body.trim()}
             >
-              {submitting ? "Сохраняем..." : "Отправить"}
+              {submitting ? "Sending..." : "Submit"}
             </button>
             <button
               className="btn btn-secondary"
@@ -387,46 +381,56 @@ export function ProductReviews({
               onClick={resetForm}
               disabled={submitting}
             >
-              Отмена
+              Cancel
             </button>
           </div>
-          <p className="product-reviews__note">
-            Отправленный отзыв попадёт на модерацию. О публикации мы сообщим письмом.
+          <p className={styles.formNote}>
+            Reviews are moderated. We may reach out by email if clarification is needed.
           </p>
         </div>
       )}
 
-      <ul className="product-review-list">
-        {reviews.map((review) => (
-          <li key={review.id} className="product-review-card">
-            <div className="product-review-card__header">
-              <strong>{review.user?.name ?? "\u0413\u043e\u0441\u0442\u044c"}</strong>
-              <span className="product-review-card__rating">{`${review.rating} ★`}</span>
+      <ul className={styles.reviewsList}>
+        {(reviews ?? []).map((review) => (
+          <li key={review.id} className={styles.reviewCard}>
+            <div className={styles.reviewCardHeader}>
+              <strong className={styles.reviewCardAuthor}>
+                {review.user?.name ?? "Guest"}
+              </strong>
+              <span className={styles.reviewCardRating}>{`${review.rating} в…`}</span>
             </div>
-            <div className="product-review-card__meta">
+            <div className={styles.reviewCardMeta}>
               <span>{formatDate(review.created_at)}</span>
-              {review.verified_purchase && <span className="tag">Проверенная покупка</span>}
-              <span className={`tag tag--${review.moderation_status}`}>
+              {review.verified_purchase && <span className={styles.chip}>Verified purchase</span>}
+              <span
+                className={`${styles.chip} ${
+                  review.moderation_status === "approved"
+                    ? styles.chipSuccess
+                    : review.moderation_status === "pending"
+                    ? styles.chipWarning
+                    : styles.chipDanger
+                }`}
+              >
                 {moderationLabel(review.moderation_status)}
               </span>
             </div>
-            {review.title && <h4 className="product-review-card__title">{review.title}</h4>}
-            <p className="product-review-card__body">{review.body}</p>
+            {review.title && <h4 className={styles.reviewCardTitle}>{review.title}</h4>}
+            <p className={styles.reviewCardBody}>{review.body}</p>
             {review.is_owner && (
-              <div className="product-review-card__actions">
+              <div className={styles.reviewCardActions}>
                 <button
-                  className="btn btn-secondary"
+                  className={styles.actionButton}
                   onClick={() => handleEdit(review)}
                   disabled={submitting}
                 >
-                  Редактировать
+                  Edit
                 </button>
                 <button
-                  className="btn btn-outline"
+                  className={`${styles.actionButton} ${styles.actionButtonDanger}`}
                   onClick={() => handleDelete(review.id)}
                   disabled={submitting}
                 >
-                  Удалить
+                  Delete
                 </button>
               </div>
             )}
@@ -434,17 +438,19 @@ export function ProductReviews({
         ))}
       </ul>
 
-      {hasMore && (
-        <button className="btn btn-secondary" onClick={handleLoadMore} disabled={loading}>
-          {loading ? "Загружаем..." : "Показать ещё"}
+      {nextPage && (
+        <button className={styles.loadMoreButton} onClick={handleLoadMore} disabled={loading}>
+          {loading ? "Loading..." : "Load more"}
         </button>
       )}
 
       {!loading && reviews.length === 0 && (
-        <p className="product-reviews__empty">
-          Будьте первым, кто поделится впечатлением о товаре.
+        <p className={styles.emptyMessage}>
+          No reviews yet вЂ” be the first to share your experience.
         </p>
       )}
     </section>
   );
 }
+
+

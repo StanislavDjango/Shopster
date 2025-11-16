@@ -9,13 +9,14 @@ from .models import Product
 class ProductFilter(django_filters.FilterSet):
     min_price = django_filters.NumberFilter(field_name="price", lookup_expr="gte")
     max_price = django_filters.NumberFilter(field_name="price", lookup_expr="lte")
+    brand = django_filters.CharFilter(field_name="brand", lookup_expr="iexact")
     category = django_filters.CharFilter(method="filter_category")
     in_stock = django_filters.BooleanFilter(method="filter_in_stock")
     search = django_filters.CharFilter(method="filter_search")
 
     class Meta:
         model = Product
-        fields = ["category", "min_price", "max_price", "in_stock"]
+        fields = ["category", "brand", "min_price", "max_price", "in_stock"]
 
     def filter_category(
         self, queryset: QuerySet[Product], name: str, value: str | None

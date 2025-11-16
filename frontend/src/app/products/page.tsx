@@ -2,7 +2,7 @@
 
 import { CatalogFilters } from "@/components/CatalogFilters";
 import { ProductsInfiniteList } from "@/components/ProductsInfiniteList";
-import { fetchCategories, fetchProductsPage } from "@/lib/api";
+import { fetchCategories, fetchProductFacets, fetchProductsPage } from "@/lib/api";
 import styles from "./products.module.css";
 
 const PAGE_SIZE = 12;
@@ -36,7 +36,18 @@ function sanitizeOrdering(value?: string): string | undefined {
   if (!value) {
     return undefined;
   }
-  const allowed = new Set(["price", "-price", "name", "-name", "created_at", "-created_at"]);
+  const allowed = new Set([
+    "price",
+    "-price",
+    "name",
+    "-name",
+    "created_at",
+    "-created_at",
+    "reviews_count",
+    "-reviews_count",
+    "average_rating",
+    "-average_rating",
+  ]);
   return allowed.has(value) ? value : undefined;
 }
 
@@ -51,9 +62,18 @@ function sanitizeSearch(value?: string): string | undefined {
   return trimmed.slice(0, 120);
 }
 
+function sanitizeBrand(value?: string): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  return trimmed ? trimmed.slice(0, 80) : undefined;
+}
+
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = searchParams ? await searchParams : {};
   const category = normalizeParam(params.category);
+  const brand = sanitizeBrand(normalizeParam(params.brand));
   const minPrice = sanitizePrice(normalizeParam(params.min_price));
   const maxPrice = sanitizePrice(normalizeParam(params.max_price));
   const rawInStock = normalizeParam(params.in_stock);
@@ -64,20 +84,29 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const queryParams: Record<string, string | undefined> = {
     search: searchTerm,
     category,
+    brand,
     min_price: minPrice,
     max_price: maxPrice,
     in_stock: inStock,
     ordering,
   };
 
-  const [initialPage, categories] = await Promise.all([
+  const facetQuery: Record<string, string | undefined> = {
+    ...queryParams,
+    brand: undefined,
+    ordering: undefined,
+  };
+
+  const [initialPage, categories, facets] = await Promise.all([
     fetchProductsPage({ pageSize: PAGE_SIZE, query: queryParams }),
     fetchCategories(),
+    fetchProductFacets(facetQuery),
   ]);
 
   const filterValues = {
     search: searchTerm,
     category,
+    brand,
     min_price: minPrice,
     max_price: maxPrice,
     in_stock: inStock,
@@ -97,12 +126,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           ) : (
             <p>Products are synced from Django. Use search and filters to navigate quickly.</p>
           )}
-        </div>
+          </div>
         
-        <div className={styles.catalogLayout}>
-          <aside className={styles.sidebar}>
-            <CatalogFilters categories={categories} initialValues={filterValues} />
-          </aside>
+          <div className={styles.catalogLayout}>
+            <aside className={styles.sidebar}>
+              <CatalogFilters categories={categories} brands={facets.brands} initialValues={filterValues} />
+            </aside>
           
           <main className={styles.content}>
             <ProductsInfiniteList

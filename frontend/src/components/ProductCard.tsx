@@ -13,6 +13,13 @@ type Props = {
 
 export function ProductCard({ product }: Props) {
   const mainImage = product.images.find((img) => img.is_main) ?? product.images[0];
+  const isInStock = product.stock > 0;
+  const ratingText =
+    typeof product.average_rating === "number"
+      ? `${product.average_rating.toFixed(1)} stars (${product.reviews_count} review${
+          product.reviews_count === 1 ? "" : "s"
+        })`
+      : "No reviews yet";
 
   return (
     <div className="product-card">
@@ -31,11 +38,30 @@ export function ProductCard({ product }: Props) {
         <div className="product-image" />
       )}
       <div className="product-body">
-        <span className="product-price">
-          {formatCurrency(product.currency ?? "RUB", Number(product.price))}
-        </span>
-        <h3>{product.name}</h3>
-        <p>{product.short_description}</p>
+        <div className="product-header">
+          <span className="product-price">
+            {formatCurrency(product.currency ?? "RUB", Number(product.price))}
+          </span>
+          <span className={`product-stock ${isInStock ? "positive" : "muted"}`}>
+            {isInStock ? "In stock" : "Out of stock"}
+          </span>
+        </div>
+        <h3 className="product-title">
+          {product.brand ? `${product.brand} - ` : ""}
+          {product.name}
+        </h3>
+        <p className="product-description">{product.short_description}</p>
+        <div className="product-meta">
+          <span className="product-rating" aria-label="Average rating">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path d="M12 17.3 6.18 21l1.56-6.7L2 9.27l6.9-.59L12 2l3.1 6.68 6.9.59-5.74 5.03L17.82 21z" />
+            </svg>
+            {ratingText}
+          </span>
+          {product.category?.name && (
+            <span className="product-category">{product.category.name}</span>
+          )}
+        </div>
         <div className="product-actions">
           <Link href={`/products/${product.slug}`} className="btn btn-outline">
             View details

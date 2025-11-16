@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+.footer {
+  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+  color: #e0e0e0;
+  padding: 4rem 0 2rem;
+  margin-top: 6rem;
+  border-top: 1px solid rgba(0, 112, 243, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #0070f3, transparent);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  color: #0070f3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0070f3 0%, #00d4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: #999;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.socials {
+  display: flex;
+  gap: 1rem;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 112, 243, 0.1);
+  border: 1px solid rgba(0, 112, 243, 0.2);
+  border-radius: 8px;
+  color: #0070f3;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.socialLink svg {
+  width: 20px;
+  height: 20px;
+}
+
+.socialLink:hover {
+  background: linear-gradient(135deg, #0070f3 0%, #00d4ff 100%);
+  color: white;
+  border-color: transparent;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 112, 243, 0.3);
+}
+
+.sectionTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 1.25rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.linksList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.linksList li {
+  transition: transform 0.2s ease;
+}
+
+.linksList li:hover {
+  transform: translateX(4px);
+}
+
+.linksList a {
+  color: #999;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  display: block;
+}
+
+.linksList a:hover {
+  color: #0070f3;
+}
+
+.bottom {
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.copyright {
+  flex: 1;
+}
+
+.copyright p {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.payment {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.payment span {
+  color: #999;
+}
+
+.paymentMethods {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.method {
+  padding: 0.4rem 0.75rem;
+  background: rgba(0, 112, 243, 0.1);
+  border: 1px solid rgba(0, 112, 243, 0.2);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #0070f3;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .content {
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 0 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .content {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .section:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .payment {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 2rem 0 1rem;
+    margin-top: 3rem;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .section:first-child {
+    grid-column: auto;
+  }
+
+  .bottom {
+    flex-direction: column;
+    font-size: 0.85rem;
+  }
+
+  .paymentMethods {
+    flex-wrap: wrap;
+  }
+
+  .method {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
